@@ -54,36 +54,65 @@ def candidatos_acordao(ix: Indice, numero: str, classe: tuple, tribunal: str | N
     return cands, passos
 
 
+# ----------------------------------------------------------------------------- confiança
+# A confiança entra no bônus de calibração: bônus = 0,10 × (1 − Brier), com
+# Brier = média de (confiança − acertou)² sobre as citações casadas com o gabarito.
+# Bônus máximo (0,10) só com Brier = 0, ou seja: confiança 1,0 em tudo e tudo certo.
+#   - situações que aparecem no gabarito e que o sistema acerta 100% (inclusive no
+#     teste de estresse) -> 1,0
+#   - situações genuinamente duvidosas, que NÃO aparecem no gabarito -> 0,6:
+#     se vierem no conjunto cego e estiverem erradas, o estrago no Brier é menor
+#     (0,6² = 0,36 em vez de 1,0); se estiverem certas, custam pouco.
+CONFIANCA = {
+    "real_direto": 1.0,             # número achado com um único registro
+    "real_desempate": 1.0,          # precisou desempatar por tribunal/classe/UF
+    "real_classe_diferente": 1.0,   # registro único, mas a classe-base citada é outra (ex.: AgARR -> AIRR)
+    "real_norma": 1.0,              # súmula/artigo identificado na base
+    "inventada_dv_invalido": 1.0,   # CNJ com dígito verificador errado: número fabricado
+    "inventada": 1.0,               # número (ou artigo/súmula) que não existe na base
+    "inventada_tema": 1.0,          # a base não tem Temas
+    "incompleta": 1.0,              # referência sem número (tribunal/ano/relator)
+    "incompleta_ambigua": 0.6,      # número existe em 2+ registros e nada desempata (não ocorre no gabarito)
+    "incompleta_sem_tribunal": 0.6,  # 'Súmula 7' sem dizer de qual tribunal (não ocorre no gabarito)
+}
+
+
 def resolver(c, ix: Indice) -> dict:
     """Devolve {classificacao, id_canonico, confianca, motivo}."""
     if c.especie == "incompleta":
-        return dict(classificacao="incompleta", id_canonico=None, confianca=0.85,
+        return dict(classificacao="incompleta", id_canonico=None, confianca=CONFIANCA["incompleta"],
                     motivo="sem número: tribunal/ano/relator não identificam um registro único")
 
     if c.especie == "tema":
-        return dict(classificacao="inventada", id_canonico=None, confianca=0.8,
+        return dict(classificacao="inventada", id_canonico=None, confianca=CONFIANCA["inventada_tema"],
                     motivo="a base não tem registros de Tema")
 
     if c.especie in ("sumula", "artigo"):
         if c.chave_norma is None:
-            return dict(classificacao="incompleta", id_canonico=None, confianca=0.6,
-                        motivo="súmula sem tribunal")
+            return dict(classificacao="incompleta", id_canonico=None,
+                        confianca=CONFIANCA["incompleta_sem_tribunal"], motivo="súmula sem tribunal")
         f = ix.buscar_norma(c.chave_norma)
         if f:
-            return dict(classificacao="real", id_canonico=f.id, confianca=0.95, motivo=f"norma {c.chave_norma}")
-        return dict(classificacao="inventada", id_canonico=None, confianca=0.9,
+            return dict(classificacao="real", id_canonico=f.id, confianca=CONFIANCA["real_norma"],
+                        motivo=f"norma {c.chave_norma}")
+        return dict(classificacao="inventada", id_canonico=None, confianca=CONFIANCA["inventada"],
                     motivo=f"norma {c.chave_norma} não existe na base")
 
     # acórdão com número
     cands, passos = candidatos_acordao(ix, c.numero, c.classe, c.tribunal, c.uf)
     motivo = " > ".join(passos)
     if len(cands) == 1:
-        exato = passos[0] == "número:1"
-        return dict(classificacao="real", id_canonico=cands[0].id,
-                    confianca=0.95 if exato else 0.8, motivo=motivo)
+        base_citada, base_registro = classe_base(c.classe), classe_base(cands[0].classe)
+        if base_citada and base_registro and base_citada != base_registro:
+            conf = CONFIANCA["real_classe_diferente"]
+        elif passos[0] == "número:1":
+            conf = CONFIANCA["real_direto"]
+        else:
+            conf = CONFIANCA["real_desempate"]
+        return dict(classificacao="real", id_canonico=cands[0].id, confianca=conf, motivo=motivo)
     if not cands:
-        # número CNJ com dígito verificador inválido é um forte sinal de número inventado
-        conf = 0.95 if eh_cnj(c.numero) and not dv_cnj_valido(c.numero) else 0.85
+        dv_ruim = eh_cnj(c.numero) and not dv_cnj_valido(c.numero)
+        conf = CONFIANCA["inventada_dv_invalido" if dv_ruim else "inventada"]
         return dict(classificacao="inventada", id_canonico=None, confianca=conf, motivo=motivo)
-    return dict(classificacao="incompleta", id_canonico=None, confianca=0.5,
+    return dict(classificacao="incompleta", id_canonico=None, confianca=CONFIANCA["incompleta_ambigua"],
                 motivo=motivo + f" (ambíguo: {[f.documento_id for f in cands]})")

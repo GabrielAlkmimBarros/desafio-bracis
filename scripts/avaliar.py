@@ -69,10 +69,10 @@ def quadro(solution, submission):
 
 
 def imprimir_quadro(accs, resultado):
-    print(f"\nNOTA FINAL: {resultado['score_final']:.4f}    (= (1·N1 + 2·N2) / 3)\n")
+    print(f"\nNOTA FINAL: {resultado['score_final']:.5f}    (= (1·N1 + 2·N2) / 3)\n")
     for nivel, acc in sorted(accs.items()):
         r = resultado["niveis"][nivel]
-        print(f"NÍVEL {nivel}  score {r['score']:.4f}  = macroF1 {r['macro_f1']:.4f}"
+        print(f"NÍVEL {nivel}  score {r['score']:.5f}  = macroF1 {r['macro_f1']:.4f}"
               f" × (1 − 0,5·τ={r['tau']:.3f}) × (1 + bônus {r['b']:.4f})")
         print(f"   {'classe':<11}{'F1':>7}{'TP':>6}{'FP':>6}{'FN':>6}{'gabarito':>10}")
         for c in km.CLASSES:

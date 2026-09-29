@@ -56,8 +56,10 @@ def ler_lei(texto: str) -> tuple[str, int] | None:
         fim = palavras[k - 1].end()
         bruto = texto[:fim].rstrip(".,;:)")
         cand = _limpar(bruto)
-        if cand in APELIDOS:
-            return APELIDOS[cand], len(bruto)
+        sem_ano = re.sub(r"\s*/\s*\d{2,4}$", "", cand)          # 'CPC/2015', 'CC/2002' -> 'cpc', 'cc'
+        for c in (cand, sem_ano):
+            if c in APELIDOS:
+                return APELIDOS[c], len(bruto)
         if len(cand) >= 10:                            # semelhança só para nomes longos
             for nome, cod in APELIDOS.items():
                 if len(nome) >= 10 and SequenceMatcher(None, cand, nome).ratio() >= 0.9:
