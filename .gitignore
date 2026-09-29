@@ -1,0 +1,10 @@
+# dados do desafio não podem ser redistribuídos e não vão no repositório
+data/
+out/
+*.csv
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
