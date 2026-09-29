@@ -33,6 +33,12 @@ python -m src.run --input data/txt --output out/atual --db data/desafio1_bracis.
 python scripts/avaliar.py out/atual
 python scripts/avaliar.py out/atual --erros
 
+# 2b. estresse (citações sintéticas geradas da base; deve terminar com 0 falhas)
+python scripts/estresse.py
+
+# 2c. evidência da calibração: acerto por situação x confiança adotada
+python scripts/calibracao.py
+
 # 3. gerar o CSV de submissão do Kaggle
 python oficial/json_to_submission.py out/atual submission.csv
 ```
@@ -42,7 +48,11 @@ python oficial/json_to_submission.py out/atual submission.csv
 - [x] Estrutura, avaliador local com a métrica oficial, oráculo para testar o encanamento
 - [x] Índice da base canônica (`python scripts/testar_indice.py`: 77/77 reais achadas, 0 inventadas com candidato)
 - [x] Detecção de citações (níveis 1 e 2)
-- [x] Classificação (real / inventada / incompleta) — nota local 1,0989 (teto 1,100)
-- [x] Teste de estresse: os 996 acórdãos citados em 5 formatos, 0 falhas (`python scripts/estresse.py`)
-- [ ] Confiança calibrada
+- [x] Classificação (real / inventada / incompleta) — nota local 1,0997 (teto 1,100)
+- [x] Teste de estresse, 0 falhas (`python scripts/estresse.py`): os 996 acórdãos em 5 formatos fixos
+      e em ruído de nível 2 combinado (abreviações, `n°/No/Nº`, número partido, OCR no número e na
+      classe, quebras de linha), inventadas sintéticas, incompletas em 10 moldes, leis e súmulas da
+      base e fora dela, e distratores (autos, OAB, fls., valores) que não podem ser detectados
+- [x] Confiança calibrada por situação (`src/resolver.py`, tabela `CONFIANCA`): taxa de acerto
+      esperada em texto nunca visto, não ajuste às 26 peças (`python scripts/calibracao.py`)
 - [ ] Dockerfile + entrypoint

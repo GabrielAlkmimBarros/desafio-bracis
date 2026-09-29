@@ -40,12 +40,33 @@ class Candidata:
 UFS = {"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB",
        "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
 TRIBUNAIS = {"STF", "STJ", "TSE", "TST", "STM"}
-_NOMES_TRIBUNAIS = {
-    "SUPREMO TRIBUNAL FEDERAL": "STF", "SUPERIOR TRIBUNAL DE JUSTICA": "STJ",
-    "TRIBUNAL SUPERIOR ELEITORAL": "TSE", "TRIBUNAL SUPERIOR DO TRABALHO": "TST",
-    "SUPERIOR TRIBUNAL MILITAR": "STM",
-}
 _CONECTORES = r"(?:no|na|nos|nas|em|de|do|da|a|ao|o)"
+
+# letras que o OCR do nível 2 confunde (e acentos que somem ou aparecem): 'profcrido', 'relãtoria',
+# 'Superi0r', '5uperior', 'Minlstro', 'Complernentar'
+_OCR_LETRA = {"a": "[aáàâã]", "e": "[eéêc]", "i": "[iíl1]", "o": "[oóôõ0]", "u": "[uú]", "l": "[l1I]",
+              "s": "[s5]", "m": "(?:m|rn)", "ç": "[çc]", " ": r"\s+"}
+
+
+def _ocr(texto: str) -> str:
+    """Regex que casa `texto` (sem acento, minúsculo) com as confusões de OCR. Use com re.I."""
+    return "".join(_OCR_LETRA.get(c, re.escape(c)) for c in texto)
+
+
+_TRIB_EXTENSO = "|".join(_ocr(n) for n in (
+    "supremo tribunal federal", "superior tribunal de justiça", "tribunal superior do trabalho",
+    "tribunal superior eleitoral", "superior tribunal militar"))
+_TRIB_SIGLA = r"(?-i:[S5][TＴ][FJM]|T[S5][TE])"        # STF/STJ/STM/TST/TSE, também '5TJ'
+
+
+def sigla_tribunal(txt: str) -> str:
+    """'Superi0r Tribunal de Justiça' | '5TJ' | 'STJ' -> 'STJ'."""
+    t = sem_acento(txt).upper().translate(str.maketrans("051Ｔ", "OSLT"))
+    for chave, sigla in (("SUPREMO", "STF"), ("JUSTI", "STJ"), ("TRABA", "TST"), ("ELEITORA", "TSE"),
+                         ("MILITA", "STM")):
+        if chave in t:
+            return sigla
+    return t
 
 
 # ============================================================================ números com posição
@@ -84,6 +105,13 @@ def numeros_no_texto(texto: str):
     if pos < len(texto):
         pedacos.append((pos, len(texto)))
 
+    def proximo_util(k):
+        """O próximo pedaço que não seja só '-' ou '.' de ligação."""
+        for ini, fim in pedacos[k + 1:]:
+            if not _eh_ligacao(texto[ini:fim]):
+                return texto[ini:fim]
+        return ""
+
     corrida = []                                 # pedaços da corrida atual
     for k, (ini, fim) in enumerate(pedacos):
         p = texto[ini:fim]
@@ -91,9 +119,10 @@ def numeros_no_texto(texto: str):
         if corrida and _QUEBRA_CORRIDA.search(separador):
             yield from _fechar(corrida, texto)
             corrida = []
-        proximo = texto[pedacos[k + 1][0]:pedacos[k + 1][1]] if k + 1 < len(pedacos) else ""
+        # 'l.' ou 'O' soltos entram no começo OU no meio do número ('2.O2 O. 005', '2018 G 26 0000'),
+        # desde que venha um pedaço numérico depois
         if (_eh_pedaco_numerico(p) or (corrida and _eh_ligacao(p)) or
-                (not corrida and _eh_talvez_numero(p) and _eh_pedaco_numerico(proximo))):
+                (_eh_talvez_numero(p) and _eh_pedaco_numerico(proximo_util(k)))):
             corrida.append((ini, fim))
         else:
             yield from _fechar(corrida, texto)
@@ -122,6 +151,8 @@ def _classe_a_esquerda(texto: str, ini_num: int, janela: int = 130):
     ini_jan = max(0, ini_num - janela)
     inicios = [ini_jan + m.start() for m in re.finditer(r"(?<!\S)\S", texto[ini_jan:ini_num])]
     for s in inicios:                                    # do mais distante para o mais próximo
+        if texto[s:ini_num].strip() == "e":
+            continue                                     # '2019 e 2020', 'itens 3 e 4': conjunção, não Embargos
         siglas = canonizar_classe(texto[s:ini_num])
         conhecidas = [x for x in siglas if not x.startswith("?")]
         if conhecidas and classe_base(tuple(conhecidas)) and all(
@@ -166,21 +197,27 @@ def detectar_acordaos(texto: str) -> list[Candidata]:
 
 # ============================================================================ súmulas
 
+# número com OCR ('B3', '4O4', '2ll'): letras maiúsculas/'l' casadas sem re.I, com ao menos um dígito
+_NUM_OCR = r"(?-i:[\dOlISBG]*\d[\dOlISBG]*)"
+_SUMULA_PALAVRA = r"[S5$][úu](?:m|rn)(?:u[l1I|]a)?\.?"          # Súmula | Súm. | 5úmula | Súrnula | Súmu1a
 _SUMULA = re.compile(
-    r"(?:[S5$][úu](?:m|rn)(?:ula)?\.?|Verbete)\s+(?:(?P<vinc>Vinculante)\s+)?(?:n\s*[º°o.]*\s*)?"
-    r"(?P<num>[\dOlI]*\d[\dOlI]*)"
-    r"(?:\s*,?\s*d[oa]\s+(?P<trib>STF|STJ|TST|TSE|STM|Supremo Tribunal Federal|Superior Tribunal de Justi[çc]a|"
-    r"Tribunal Superior (?:do Trabalho|Eleitoral)|Superior Tribunal Militar|S[TＴ][FJ]))?",
+    rf"(?P<cab>{_SUMULA_PALAVRA}|Verbete|Enunciado)\s+(?:(?P<vinc>Vinculante)\s+)?(?:n\s*[º°o.]*\s*)?"
+    rf"(?P<num>{_NUM_OCR})"
+    rf"(?:\s+d[ao]\s+(?P<sum>{_SUMULA_PALAVRA})(?:\s+(?P<vinc2>Vinculante))?)?"      # 'Enunciado 83 da Súmula'
+    rf"(?:(?:\s*,?\s*d[oa]\s+(?:(?:[ce]\.|egr[ée]gio|colendo)\s+)?|\s*/\s*)"         # 'do STJ' | 'do c. STJ' | '/STJ'
+    rf"(?P<trib>{_TRIB_SIGLA}|{_TRIB_EXTENSO}))?",
     re.I)
 
 
 def detectar_sumulas(texto: str) -> list[Candidata]:
     achados = []
     for m in _SUMULA.finditer(texto):
+        if m["cab"].lower() == "enunciado" and not (m["sum"] or m["trib"]):
+            continue                                  # 'Enunciado 5 da Jornada...' não é súmula
         trib = m["trib"]
         if trib:
-            trib = _NOMES_TRIBUNAIS.get(sem_acento(trib).upper(), trib.upper())
-        vinc = bool(m["vinc"])
+            trib = sigla_tribunal(trib)
+        vinc = bool(m["vinc"] or m["vinc2"])
         if vinc and not trib:
             trib = "STF"
         n = int(digitos(m["num"]))
@@ -207,8 +244,9 @@ def detectar_temas(texto: str) -> list[Candidata]:
 # ============================================================================ artigos de lei
 
 _ARTIGO = re.compile(
-    r"\b(?:art(?:igo)?s?\.?)\s*(?P<num>\d{1,3}(?:\.\d{3})?)\s*[º°o]?(?:-[A-Z])?"
-    r"(?P<compl>(?:\s*,\s*(?:(?:§|par[áa]grafo)\s*\d+\s*[º°o]?(?:-[A-Z])?|par[áa]grafo [úu]nico|"
+    r"\b(?:art(?:igo)?s?\.?)\s*(?P<num>(?-i:(?=[\dOlISBG]*\d)[\dOlISBG]{1,3}(?:\.[\dOlISBG]{3})?))"   # '3l2', '29O'
+    r"\s*[º°o]?(?:-[A-Z])?"
+    r"(?P<compl>(?:\s*,\s*(?:(?:§|par[áa]grafo)\s*\d+\s*[º°o]?(?:-[A-Z])?|par[áa]grafo\s+[úu]nico|"
     r"inciso\s+[IVXLC]+|[IVXLC]+(?:-[A-Z])?|al[íi]nea\s+['‘’\"]?[a-z]['‘’\"]?|['‘’\"][a-z]['‘’\"]|caput))*)"
     r"\s*,?\s*d[oa]s?\s+", re.I)
 
@@ -220,7 +258,7 @@ def detectar_artigos(texto: str) -> list[Candidata]:
         if not lei:
             continue
         codigo, tamanho = lei
-        n = int(m["num"].replace(".", ""))
+        n = int(digitos(m["num"]))
         achados.append(Candidata(m.start(), m.end() + tamanho, "artigo", "lei",
                                  chave_norma=("artigo", codigo, n), extra={"lei": codigo}))
     return achados
@@ -229,17 +267,22 @@ def detectar_artigos(texto: str) -> list[Candidata]:
 # ============================================================================ incompletas
 
 _NOME = r"[A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ÿ'’]+(?:\s+(?:(?:d[aeo]s?|e)\s+)?[A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ÿ'’]+)*"
+_MIN = rf"(?:{_ocr('min')}(?:{_ocr('istr')}[oa])?\.?\s*)?"                   # 'Min.' | 'Ministro' | 'Minlstro'
 _ANO_RELATOR = re.compile(
-    rf"(?P<ano>(?:19|20)\d\d)\s*,?\s*"
-    rf"(?:(?:pela|sob|da|sob\s+a)\s+r\w?lat\w{{2,5}}\s+d\w\s+|"            # 'pela relatoria de' (tolera 'dc')
-    rf"Rel(?:ator|atora)?\.?\s*(?:Min(?:istr[oa])?\.?\s*)?)"                # 'Rel. Min.'
+    rf"(?P<ano>(?:19|20)\d\d)\s*,?\s*(?i:"
+    rf"(?:(?:p{_ocr('el')}[ao]|sob(?:\s+a)?|d[ao]|de)\s+)?r{_ocr('elat')}\w{{2,6}}\s+(?:d\w|p{_ocr('el')}[oa])\s+{_MIN}|"
+    #    'pela relatoria de' (tolera 'dc'), 'de relatoria do Min.', 'sob a relatoria do Ministro',
+    #    'relatado pelo Ministro'
+    rf"r{_ocr('el')}(?:{_ocr('ator')}a?)?\.?\s*{_MIN})"                          # 'Rel. Min.', 'Relator Ministro'
     rf"(?P<nome>{_NOME})")
-_CABECAS = re.compile(r"(?:julgad[oa]|precedente|ac[óo]rd[ãa]o|aresto|decis[ãa]o|voto)$", re.I)
-_TRIB_TXT = (r"(?:STF|STJ|TSE|TST|STM|Supremo Tribunal Federal|Superior Tribunal de Justi[çc]a|"
-             r"Tribunal Superior (?:do Trabalho|Eleitoral)|Superior Tribunal Militar)")
-# o que pode haver entre a cabeça e o ano: 'do STF proferido em', 'do STM de', ', de', 'julgado em'
-_MEIO = re.compile(rf"^(?P<cabeca>.+?)\s*,?\s*(?:d[oa]\s+(?P<trib>{_TRIB_TXT})\s*,?\s*)?"
-                   rf"(?:\w{{3,12}}[aie]d[oa]\s+)?(?:de|em)\s*$", re.S)
+_CABECAS = re.compile("(?:" + "|".join(_ocr(p) for p in (
+    "julgado", "julgada", "precedente", "acordao", "aresto", "decisao", "voto")) + ")$", re.I)
+_TRIB_TXT = rf"(?:{_TRIB_SIGLA}|{_TRIB_EXTENSO})"
+# o que pode haver entre a cabeça e o ano: 'do STF proferido em', 'do STM de', ', de', 'julgado em',
+# 'julgado pelo STF em'
+_MEIO = re.compile(rf"^(?P<cabeca>.+?)\s*,?\s*(?:d[oa0]\s+(?P<trib>{_TRIB_TXT})\s*,?\s*)?"
+                   rf"(?:\w{{3,12}}[aieãl1]d[oa0]\s+(?:p{_ocr('el')}[oa]\s+(?P<trib2>{_TRIB_TXT})\s+)?)?"
+                   rf"(?:d[eéc]|em)\s*$", re.S | re.I)
 
 
 def _cabeca_valida(cabeca: str) -> bool:
@@ -264,9 +307,9 @@ def detectar_incompletas(texto: str) -> list[Candidata]:
             c = re.match(rf"(?:{_CONECTORES}\s+)+", cabeca, re.I)
             deslocamento = c.end() if c else 0
             if _cabeca_valida(cabeca[deslocamento:]):
-                trib = meio["trib"]
+                trib = meio["trib"] or meio["trib2"]
                 if trib:
-                    trib = _NOMES_TRIBUNAIS.get(sem_acento(trib).upper(), trib.upper())
+                    trib = sigla_tribunal(trib)
                 achados.append(Candidata(s + deslocamento, m.end("nome"), "incompleta", "jurisprudencia",
                                          tribunal=trib, extra={"ano": int(m["ano"]), "relator": m["nome"]}))
                 break
@@ -277,6 +320,14 @@ def detectar_incompletas(texto: str) -> list[Candidata]:
 
 _PRIORIDADE = {"incompleta": 0, "sumula": 1, "artigo": 1, "tema": 1, "acordao": 2}
 
+# sinais de ruído de nível 2 no trecho: quebra de linha, letra colada em dígito ('4S5', 'RE5PE',
+# '170076O'; ordinal 'o'/'a'/'º' não conta), número com espaço ('1 741 784') ou hífen/ponto partido ('33.-')
+_RUIDO = re.compile(r"\n|\d\s+\d|\d\s*[.\-]\s+\d|\d[.\-]\s*[.\-]|(?<=\d)[^\W\doaºª°_]|[^\W\d_ºª°](?=\d)")
+
+
+def tem_ruido(trecho: str) -> bool:
+    return bool(_RUIDO.search(trecho))
+
 
 def detectar(texto: str) -> list[Candidata]:
     todas = (detectar_incompletas(texto) + detectar_sumulas(texto) + detectar_temas(texto) +
@@ -286,5 +337,6 @@ def detectar(texto: str) -> list[Candidata]:
     escolhidas: list[Candidata] = []
     for c in todas:
         if all(c.fim <= e.inicio or c.inicio >= e.fim for e in escolhidas):
+            c.extra["ruido"] = tem_ruido(texto[c.inicio:c.fim])
             escolhidas.append(c)
     return sorted(escolhidas, key=lambda c: c.inicio)

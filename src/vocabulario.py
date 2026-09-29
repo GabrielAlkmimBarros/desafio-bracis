@@ -78,18 +78,58 @@ _PADROES = [
 
 # Palavras que ligam as partes da classe e não carregam informação
 _IGNORAR = re.compile(
-    r"^(?:NO|NA|NOS|NAS|EM|DE|DO|DA|N|A|AO|TST|CRIMINAL|CIVEL|SUPERIOR|TRIBUNAL|MILITAR|"
+    r"^(?:NO|NA|NOS|NAS|EM|DE|DO|DA|N|O|A|AO|TST|CRIMINAL|CIVEL|SUPERIOR|TRIBUNAL|MILITAR|"
     r"SEGUND[OA]S?|TERCEIR[OA]S?|QUART[OA]S?|QUINT[OA]S?|DECIM[OA]S?)$")
 
 _REGEX = [(re.compile(rf"^(?:{p})\b"), s) for p, s in _PADROES]
 
+# Todas as palavras que o vocabulário conhece (as dos padrões, com as partes opcionais
+# por extenso, os conectivos e os tribunais). Serve para desfazer OCR: uma palavra
+# desconhecida só é corrigida se a correção cair numa palavra conhecida.
+_TODOS = "|".join([p for p, _ in _PADROES] + [_IGNORAR.pattern, "STF STJ TSE TST STM PROCESSO PROC"])
+_CONHECIDAS = (set(re.findall(r"[A-Z]+", re.sub(r"\(\?:|\)\??|\?", "", _TODOS))) |      # 'RESPE(?:L)?' -> RESPEL
+               set(re.findall(r"[A-Z]+", re.sub(r"\(\?:[^()]*\)\?", " ", _TODOS))))     # e -> RESPE
+
+
+# confusões de OCR do nível 2 (as da aba Data e as vistas no desenvolvimento: 'profcrido', 'Júnlor')
+_TROCAS_OCR = {"0": "O", "5": "S", "1": "LI", "L": "I", "I": "L", "C": "E", "RN": "M"}
+
+
+def _variantes_ocr(palavra: str, max_trocas: int = 2):
+    """Leituras alternativas de uma palavra, desfazendo até `max_trocas` confusões de OCR.
+    Troca de letra por letra só em palavras de 4+ caracteres; dígito dentro de palavra, sempre."""
+    fronteira, vistas = [palavra], {palavra}
+    for _ in range(max_trocas):
+        nova = []
+        for p in fronteira:
+            for de, paras in _TROCAS_OCR.items():
+                if len(p) < 4 and not de.isdigit():
+                    continue
+                for i in (m.start() for m in re.finditer(de, p)):
+                    for para in paras if de != "RN" else [paras]:
+                        v = p[:i] + para + p[i + len(de):]
+                        if v not in vistas:
+                            vistas.add(v)
+                            nova.append(v)
+                            yield v
+        fronteira = nova
+
+
+def _corrigir_ocr(t: str) -> str:
+    palavras = t.split(" ")
+    for k, p in enumerate(palavras):
+        if p and p not in _CONHECIDAS:
+            palavras[k] = next((v for v in _variantes_ocr(p) if v in _CONHECIDAS), p)
+    return " ".join(palavras)
+
 
 def _preparar(texto: str) -> str:
     t = sem_acento(texto.replace("°", "º")).upper()     # 'n°' (grau) -> 'nº' -> 'NO'
+    t = re.sub(r"\bA\s*\.\s*RESP", "ARESP", t)            # 'A.REsp' é AREsp (o 'A' solto seria artigo)
     t = re.sub(r"[.\-–—/()]", " ", t)
     t = re.sub(r"\b(NOS|NAS|NO|NA)(?=EMBARGOS|AGRAVO|RECURSO)", r"\1 ", t)   # 'nosEMBARGOS' colado
     t = re.sub(r"\bAG(?=(?:AIRR|ARR|RRAG|RR)\b)", "AG ", t)                     # TST 'AgARR' -> 'Ag ARR'
-    return re.sub(r"\s+", " ", t).strip()
+    return _corrigir_ocr(re.sub(r"\s+", " ", t).strip())    # 'Reclarnação', 'Rec1amação', 'C0RPUS'
 
 
 def canonizar_classe(texto: str) -> tuple[str, ...]:

@@ -4,7 +4,7 @@
 import re
 from difflib import SequenceMatcher
 
-from .normalizar import sem_acento
+from .normalizar import digitos, sem_acento
 
 # nome ou sigla -> código canônico (tipo + número da lei)
 APELIDOS = {
@@ -26,9 +26,12 @@ APELIDOS = {
     "lei das eleicoes": "L9504", "lei de inelegibilidades": "LC64", "lei de inelegibilidade": "LC64",
 }
 
+# número da lei: '13.105' | '13105' | com OCR ('13.l05', 'B.078'); as letras de OCR são
+# maiúsculas/‘l’ e casadas sem re.I, para 'nº' e palavras não virarem número
+_NUM_LEI = r"(?-i:[\dOlISBG]{1,3}(?:\.\s?[\dOlISBG]{3})+|[\dOlISBG]+)"
 _LEI_NUMERADA = re.compile(
-    r"(?P<tipo>Lei\s+Complementar|LC|Decreto[\s\-]*Lei|DL|Lei)\s*"
-    r"(?:n\s*[º°o.]*\s*)?(?P<num>\d{1,3}(?:\.\s?\d{3})*|\d+)(?:\s*/\s*(?P<ano>\d{2,4}))?",
+    r"(?P<tipo>Lei\s+Compl[ec](?:m|rn)[ec]ntar|LC|Decreto[\s\-]*Lei|DL|Lei)\s*"
+    rf"(?:n\s*[º°o.]*\s*)?(?P<num>{_NUM_LEI})(?:\s*/\s*(?P<ano>\d{{2,4}}))?",
     re.I)
 
 
@@ -44,10 +47,11 @@ def ler_lei(texto: str) -> tuple[str, int] | None:
     Tolera ruído de OCR ('Constituição Fedcral') comparando por semelhança.
     """
     m = _LEI_NUMERADA.match(texto)
-    if m:
+    if m and any(c.isdigit() for c in m["num"]):
         tipo = sem_acento(m["tipo"]).upper().replace(" ", "").replace("-", "")
-        prefixo = {"LEICOMPLEMENTAR": "LC", "LC": "LC", "DECRETOLEI": "DL", "DL": "DL"}.get(tipo, "L")
-        numero = int(re.sub(r"\D", "", m["num"]))
+        prefixo = "LC" if tipo.startswith("LEICOMPL") or tipo == "LC" else \
+            {"DECRETOLEI": "DL", "DL": "DL"}.get(tipo, "L")
+        numero = int(digitos(m["num"]))
         return f"{prefixo}{numero}", m.end()
 
     # nomes por extenso ou siglas: tenta as primeiras 7..1 palavras, da mais longa para a mais curta
@@ -56,8 +60,10 @@ def ler_lei(texto: str) -> tuple[str, int] | None:
         fim = palavras[k - 1].end()
         bruto = texto[:fim].rstrip(".,;:)")
         cand = _limpar(bruto)
-        if cand in APELIDOS:
-            return APELIDOS[cand], len(bruto)
+        sem_ano = re.sub(r"\s*/\s*\w{2,4}$", "", cand)          # 'CPC/2015', 'CC/2002', 'CRFB/8B'
+        for c in (cand, sem_ano):
+            if c in APELIDOS:
+                return APELIDOS[c], len(bruto)
         if len(cand) >= 10:                            # semelhança só para nomes longos
             for nome, cod in APELIDOS.items():
                 if len(nome) >= 10 and SequenceMatcher(None, cand, nome).ratio() >= 0.9:
