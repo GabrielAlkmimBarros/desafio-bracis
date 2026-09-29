@@ -268,6 +268,11 @@ MOLDES_INCOMPLETA = [
     "precedente do {T} julgado em {A}, Relator Ministro {R}",
     "{E} julgado pelo {T} em {A}, sob a relatoria do Ministro {R}",
     "decisão do {T} de {A}, Rel. {R}",
+    # relator antes do ano, entre parênteses, tribunal por extenso (trazidas do estresse do colega)
+    "acórdão do {T}, de relatoria do Ministro {R}, julgado em {A}",
+    "julgado do {T} de {A} (Rel. Min. {R})",
+    "precedente do {TE} de {A}, da relatoria de {R}",
+    "decisão do {T} proferida em {A}, sob a relatoria da Ministra {R}",
 ]
 
 
@@ -285,7 +290,8 @@ def formatos_incompleta(f, rng):
     if ("{E}" in molde and base not in _EXTENSO):
         molde = MOLDES_INCOMPLETA[0]
     nome = rng.choice([relator, relator.upper(), relator.title()])
-    s = molde.format(T=f.tribunal, A=f.ano, R=nome, E=_EXTENSO.get(base, ""), S=SIGLA_ESCRITA.get(base, base))
+    s = molde.format(T=f.tribunal, TE=TRIB_EXTENSO[f.tribunal], A=f.ano, R=nome, E=_EXTENSO.get(base, ""),
+                     S=SIGLA_ESCRITA.get(base, base))
     yield "incompleta limpa", s
     yield "incompleta nível 2", quebrar_linha(ocr_texto(s, rng), rng)
 
@@ -302,7 +308,7 @@ def ocr_texto(s: str, rng: random.Random) -> str:
 # ---- normas
 
 NOMES_LEI = {
-    "L13105": ["CPC", "Código de Processo Civil", "CPC/2015", "Lei nº 13.105/2015", "NCPC",
+    "L13105": ["CPC", "Código de Processo Civil", "CPC/2015", "Lei nº 13.105/2015", "Lei 13.105/15", "NCPC",
                "Código de Processo Civil de 2015"],
     "L10406": ["CC", "Código Civil", "CC/2002", "Lei nº 10.406/2002", "Código Civil de 2002"],
     "DL5452": ["CLT", "Consolidação das Leis do Trabalho", "Decreto-Lei nº 5.452/1943"],
@@ -312,11 +318,16 @@ NOMES_LEI = {
     "DL1001": ["CPM", "Código Penal Militar", "Decreto-Lei nº 1.001/1969"],
     "L8078": ["CDC", "Código de Defesa do Consumidor", "Lei nº 8.078/1990", "Lei 8.078/90"],
     "L4737": ["Código Eleitoral", "Lei nº 4.737/1965"],
-    "LC64": ["LC 64/90", "Lei Complementar nº 64/1990", "LC nº 64/1990", "Lei de Inelegibilidades"],
+    "LC64": ["LC 64/90", "Lei Complementar nº 64/1990", "LC nº 64/1990", "Lei Complementar 64/90",
+             "Lei de Inelegibilidades"],
 }
 COMPLEMENTOS = ["", ", I", ", inciso I", ", § 1º", ", caput", ", parágrafo único", ", IX", ", I, 'g'"]
 TRIB_EXTENSO = {"STJ": "Superior Tribunal de Justiça", "STF": "Supremo Tribunal Federal",
-                "TST": "Tribunal Superior do Trabalho"}
+                "TST": "Tribunal Superior do Trabalho", "TSE": "Tribunal Superior Eleitoral",
+                "STM": "Superior Tribunal Militar"}
+# artigos de leis que existem no mundo mas não têm registro na base: inventada (cobertura congelada)
+ARTIGOS_FORA_DA_BASE = ["art. 172 da Lei nº 9.504/1997", "art. 60 da Lei nº 13.467/2017", "art. 927 do Código Civil",
+                        "art. 121 do Código Penal", "art. 3º do CTN"]
 
 
 def artigo_escrito(n: int, rng) -> str:
@@ -345,18 +356,57 @@ def ruido_ocr_curto(s: str, rng) -> str:
 def formatos_sumula(trib, vinc, n, rng):
     if vinc:
         formas = [f"Súmula Vinculante {n}", f"Súmula Vinculante nº {n}", f"Súmula Vinculante n. {n} do STF",
-                  f"SÚMULA VINCULANTE {n}", f"Enunciado {n} da Súmula Vinculante"]
+                  f"SÚMULA VINCULANTE {n}", f"Enunciado {n} da Súmula Vinculante", f"SV {n}"]
     else:
         formas = [f"Súmula {n} do {trib}", f"Súmula nº {n} do {trib}", f"Súmula n. {n}/{trib}",
                   f"Súmula {n}/{trib}", f"Súm. {n} do {trib}", f"SÚMULA {n} DO {trib}",
                   f"Súmula {n} do {TRIB_EXTENSO[trib]}", f"Enunciado {n} da Súmula do {trib}",
-                  f"verbete {n} da Súmula do {trib}"]
+                  f"verbete {n} da Súmula do {trib}", f"Súmula {n}, I, do {trib}",
+                  f"Súmula nº {n}, item I, do {trib}", f"Súmula {n}, inciso IV, do {trib}",
+                  f"Enunciado {n} da Súmula de Jurisprudência Dominante do {trib}"]
     for s in formas:
         yield "súmula", s
         yield "súmula nível 2", quebrar_linha(ruido_ocr_curto(s, rng), rng)
 
 
+# ---- inventadas com número totalmente aleatório (trazidas do estresse do colega)
+
+def formatos_inventada_aleatoria(ix, rng):
+    for _ in range(60):
+        n = str(rng.randint(1_000_000, 2_300_000))
+        if not ix.buscar_numero(n):
+            yield "inventada aleatória", f"REsp nº {numero_com_pontos(n)}/SP"
+        n = str(rng.randint(30_000, 90_000))
+        if not ix.buscar_numero(n):
+            yield "inventada aleatória", f"Rcl {numero_com_pontos(n)}/DF"
+        cnj = f"{rng.randint(7_000_000, 7_001_500)}-{rng.randint(10, 99)}.{rng.randint(2018, 2026)}.7.00.0000"
+        if not ix.buscar_numero(cnj):
+            yield "inventada aleatória", f"APL nº {cnj}/RJ"
+        seq, dv = rng.randint(1, 99999), rng.randint(10, 99)
+        resto = f"{rng.randint(2008, 2020)}.5.{rng.randint(1, 24):02d}.{rng.randint(1, 999):04d}"
+        if not ix.buscar_numero(f"{seq:07d}-{dv}.{resto}"):
+            yield "inventada aleatória", f"RR-{seq}-{dv}.{resto}"
+
+
 # ---- distratores (números que parecem citação e não são)
+
+# frases sem citação (trazidas do estresse do colega): nada pode ser detectado
+FRASES_SEM_CITACAO = [
+    "Processo nº 6706918-56.2019.4.17.3043", "Autos nº 9426435-30.2024.8.08.5965", "Valor da causa: R$ 111.452,72",
+    "por seu advogado que esta subscreve (OAB/BA 349745), vem, respeitosamente",
+    "Contrarrazões apresentadas às fls. 790/829. Vieram os autos conclusos.", "Protocolo nº 2022.3657393",
+    "Memorial nº 255/2021", "honorários advocatícios fixados em 10% sobre o valor atualizado da causa",
+    "firmado em 3 de janeiro de 2025, por meio do qual a contratada se obrigou",
+    "nos termos da Lei nº 13.467/2017, que alterou a CLT", "conforme o entendimento sumulado sobre a matéria",
+    "Registre-se que o tema comporta enfrentamento sob dupla perspectiva.",
+    "a jurisprudência pacífica desta Corte e os precedentes desta Casa",
+    "o dispositivo constitucional invocado na origem, de aplicação cogente",
+    "Sessão virtual de 20/06/2022 a 24/06/2022, julgamento unânime.",
+    "o laudo pericial de fls. 591/977 concluiu pela materialidade", "Enunciado 5 da I Jornada de Direito Civil",
+    "Resolução TSE nº 23.610/2019", "a decisão de 2019, proferida pelo juízo de origem, foi mantida",
+    "o recurso foi interposto em 2021 pelo Ministério Público", "CEP 01310-100, telefone (11) 3333-4444",
+]
+
 
 def formatos_distrator(rng):
     cnj = f"{rng.randrange(10 ** 6, 10 ** 7):07d}-{rng.randrange(100):02d}.{rng.randrange(2010, 2026)}." \
@@ -451,7 +501,12 @@ def main():
         if quer("C"):
             for nome, cit in formatos_incompleta(f, rngs["C"]):
                 registrar("C", nome, cit, "incompleta", set())
+    if quer("B"):
+        for nome, cit in formatos_inventada_aleatoria(ix, rngs["B"]):
+            registrar("B", nome, cit, "inventada", set())
     if quer("D"):
+        for cit in ARTIGOS_FORA_DA_BASE:
+            registrar("D", "artigo de lei fora da base", cit, "inventada", set())
         for chave, f in sorted(ix.por_norma.items(), key=str):
             rng = rngs["D"]
             if chave[0] == "artigo":
@@ -475,6 +530,8 @@ def main():
         for _ in range(100):
             for nome, cit in formatos_distrator(rngs["E"]):
                 registrar("E", nome, cit, None, set())
+        for cit in FRASES_SEM_CITACAO:
+            registrar("E", "frase sem citação", cit, None, set())
 
     print(f"{'seção':<6}{'formato':<28}{'certo':>7}{'ambígua':>9}{'falhou':>8}{'GRAVE':>7}")
     total_falhas = 0

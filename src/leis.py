@@ -30,7 +30,7 @@ APELIDOS = {
 # maiúsculas/‘l’ e casadas sem re.I, para 'nº' e palavras não virarem número
 _NUM_LEI = r"(?-i:[\dOlISBG]{1,3}(?:\.\s?[\dOlISBG]{3})+|[\dOlISBG]+)"
 _LEI_NUMERADA = re.compile(
-    r"(?P<tipo>Lei\s+Compl[ec](?:m|rn)[ec]ntar|LC|Decreto[\s\-]*Lei|DL|Lei)\s*"
+    r"(?P<tipo>Lei\s+Comp[l1I][ec](?:m|rn)[ec]ntar|LC|Decreto[\s\-]*Lei|DL|Lei)\s*"
     rf"(?:n\s*[º°o.]*\s*)?(?P<num>{_NUM_LEI})(?:\s*/\s*(?P<ano>\d{{2,4}}))?",
     re.I)
 

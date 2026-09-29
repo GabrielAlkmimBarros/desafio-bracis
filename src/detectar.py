@@ -201,9 +201,11 @@ def detectar_acordaos(texto: str) -> list[Candidata]:
 _NUM_OCR = r"(?-i:[\dOlISBG]*\d[\dOlISBG]*)"
 _SUMULA_PALAVRA = r"[S5$][úu](?:m|rn)(?:u[l1I|]a)?\.?"          # Súmula | Súm. | 5úmula | Súrnula | Súmu1a
 _SUMULA = re.compile(
-    rf"(?P<cab>{_SUMULA_PALAVRA}|Verbete|Enunciado)\s+(?:(?P<vinc>Vinculante)\s+)?(?:n\s*[º°o.]*\s*)?"
-    rf"(?P<num>{_NUM_OCR})"
-    rf"(?:\s+d[ao]\s+(?P<sum>{_SUMULA_PALAVRA})(?:\s+(?P<vinc2>Vinculante))?)?"      # 'Enunciado 83 da Súmula'
+    rf"(?:(?P<cab>{_SUMULA_PALAVRA}|Verbete|Enunciado)\s+(?:(?P<vinc>Vinculante)\s+)?|\b(?-i:(?P<sv>[S5]V))\s+)"
+    rf"(?:n\s*[º°o.]*\s*)?(?P<num>{_NUM_OCR})"
+    rf"(?:\s*,\s*(?:item\s+|inciso\s+)?[IVX]+\b\s*,?)?"                            # 'Súmula 331, IV, do TST'
+    rf"(?:\s+d[ao]\s+(?P<sum>{_SUMULA_PALAVRA})(?:\s+de\s+{_ocr('jurisprudencia')})?"   # 'Enunciado 83 da Súmula'
+    rf"(?:\s+(?:(?P<vinc2>Vinculante)|{_ocr('dominante')}))?)?"
     rf"(?:(?:\s*,?\s*d[oa]\s+(?:(?:[ce]\.|egr[ée]gio|colendo)\s+)?|\s*/\s*)"         # 'do STJ' | 'do c. STJ' | '/STJ'
     rf"(?P<trib>{_TRIB_SIGLA}|{_TRIB_EXTENSO}))?",
     re.I)
@@ -212,12 +214,13 @@ _SUMULA = re.compile(
 def detectar_sumulas(texto: str) -> list[Candidata]:
     achados = []
     for m in _SUMULA.finditer(texto):
-        if m["cab"].lower() == "enunciado" and not (m["sum"] or m["trib"]):
-            continue                                  # 'Enunciado 5 da Jornada...' não é súmula
+        cab = (m["cab"] or "").lower()
+        if cab in ("enunciado", "verbete") and not (m["sum"] or m["trib"]):
+            continue                                  # 'Enunciado 5 da Jornada', 'verbete 12': podem ser qualquer coisa
         trib = m["trib"]
         if trib:
             trib = sigla_tribunal(trib)
-        vinc = bool(m["vinc"] or m["vinc2"])
+        vinc = bool(m["vinc"] or m["vinc2"] or m["sv"])
         if vinc and not trib:
             trib = "STF"
         n = int(digitos(m["num"]))
@@ -268,21 +271,25 @@ def detectar_artigos(texto: str) -> list[Candidata]:
 
 _NOME = r"[A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ÿ'’]+(?:\s+(?:(?:d[aeo]s?|e)\s+)?[A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ÿ'’]+)*"
 _MIN = rf"(?:{_ocr('min')}(?:{_ocr('istr')}[oa])?\.?\s*)?"                   # 'Min.' | 'Ministro' | 'Minlstro'
-_ANO_RELATOR = re.compile(
-    rf"(?P<ano>(?:19|20)\d\d)\s*,?\s*(?i:"
-    rf"(?:(?:p{_ocr('el')}[ao]|sob(?:\s+a)?|d[ao]|de)\s+)?r{_ocr('elat')}\w{{2,6}}\s+(?:d\w|p{_ocr('el')}[oa])\s+{_MIN}|"
-    #    'pela relatoria de' (tolera 'dc'), 'de relatoria do Min.', 'sob a relatoria do Ministro',
-    #    'relatado pelo Ministro'
-    rf"r{_ocr('el')}(?:{_ocr('ator')}a?)?\.?\s*{_MIN})"                          # 'Rel. Min.', 'Relator Ministro'
-    rf"(?P<nome>{_NOME})")
+# o relator: 'pela relatoria de X' (tolera 'dc', 'pcla'), 'de relatoria do Min. X', 'sob a relatoria da
+# Ministra X', 'relatado pelo Ministro X', 'Rel. Min. X', 'Relator Ministro X', '(Rel. Min. X)'
+_RELATOR = re.compile(
+    rf"(?P<marca>(?i:(?:(?:p{_ocr('el')}[ao]|sob(?:\s+a)?|d[ao]|de)\s+)?r{_ocr('elat')}\w{{2,6}}\s+"
+    rf"(?:d\w{{1,2}}|p{_ocr('el')}[oa])\s+{_MIN}|"
+    rf"\(?\s*r{_ocr('el')}(?:{_ocr('ator')}a?)?\.?\s*{_MIN}))"
+    rf"(?P<nome>{_NOME})\)?")
+_ANO_ANTES = re.compile(r"(?P<ano>(?:19|20)\d\d)[\s,;(]*$")                        # '... de 2024, Rel. Min. X'
+_ANO_DEPOIS = re.compile(rf"^\s*,?\s*(?:\w{{3,12}}[aieãl1]d[oa0]\s+)?(?:em|d[eéc])\s+(?P<ano>(?:19|20)\d\d)",
+                         re.I)                                                         # 'Rel. Min. X, julgado em 2021'
 _CABECAS = re.compile("(?:" + "|".join(_ocr(p) for p in (
     "julgado", "julgada", "precedente", "acordao", "aresto", "decisao", "voto")) + ")$", re.I)
 _TRIB_TXT = rf"(?:{_TRIB_SIGLA}|{_TRIB_EXTENSO})"
-# o que pode haver entre a cabeça e o ano: 'do STF proferido em', 'do STM de', ', de', 'julgado em',
-# 'julgado pelo STF em'
-_MEIO = re.compile(rf"^(?P<cabeca>.+?)\s*,?\s*(?:d[oa0]\s+(?P<trib>{_TRIB_TXT})\s*,?\s*)?"
-                   rf"(?:\w{{3,12}}[aieãl1]d[oa0]\s+(?:p{_ocr('el')}[oa]\s+(?P<trib2>{_TRIB_TXT})\s+)?)?"
-                   rf"(?:d[eéc]|em)\s*$", re.S | re.I)
+# entre a cabeça e o ANO: 'do STF proferido em', 'do STM de', ', de', 'julgado em', 'julgado pelo STF em'
+_MEIO_ANO = re.compile(rf"^(?P<cabeca>.+?)\s*,?\s*(?:d[oa0]\s+(?P<trib>{_TRIB_TXT})\s*,?\s*)?"
+                       rf"(?:\w{{3,12}}[aieãl1]d[oa0]\s+(?:p{_ocr('el')}[oa]\s+(?P<trib2>{_TRIB_TXT})\s+)?)?"
+                       rf"(?:d[eéc]|em)\s*$", re.S | re.I)
+# entre a cabeça e o RELATOR, quando o ano vem depois: 'acórdão do STM, de relatoria do Min. X, julgado em 2025'
+_MEIO_REL = re.compile(rf"^(?P<cabeca>.+?)\s*,?\s*(?:d[oa0]\s+(?P<trib>{_TRIB_TXT})\s*,?\s*)?$", re.S | re.I)
 
 
 def _cabeca_valida(cabeca: str) -> bool:
@@ -292,27 +299,45 @@ def _cabeca_valida(cabeca: str) -> bool:
     return bool(siglas) and all(not x.startswith("?") for x in siglas) and classe_base(siglas) is not None
 
 
+def _achar_cabeca(texto: str, ancora: int, meio_rx):
+    """Procura, à esquerda da âncora, a cabeça da referência ('julgado', 'precedente', classe...).
+    Devolve (início, tribunal) ou None."""
+    ini_jan = max(0, ancora - 110)
+    for x in re.finditer(r"(?<!\S)\S", texto[ini_jan:ancora]):      # do mais distante para o mais próximo
+        s = ini_jan + x.start()
+        meio = meio_rx.match(texto[s:ancora])
+        if not meio:
+            continue
+        cabeca = meio["cabeca"]
+        c = re.match(rf"(?:{_CONECTORES}\s+)+", cabeca, re.I)       # 'no julgado' -> 'julgado'
+        desloc = c.end() if c else 0
+        if _cabeca_valida(cabeca[desloc:]):
+            trib = meio["trib"] or meio.groupdict().get("trib2")
+            return s + desloc, sigla_tribunal(trib) if trib else None
+    return None
+
+
 def detectar_incompletas(texto: str) -> list[Candidata]:
+    """Referência a uma decisão concreta, sem número: CABEÇA [do TRIBUNAL] + ANO + RELATOR.
+    Âncora no relator; o ano pode vir antes ('de 2024, Rel. Min. X') ou depois ('Rel. Min. X, julgado em 2024')."""
     achados = []
-    for m in _ANO_RELATOR.finditer(texto):
-        ini_ano = m.start("ano")
-        ini_jan = max(0, ini_ano - 110)
-        inicios = [ini_jan + x.start() for x in re.finditer(r"(?<!\S)\S", texto[ini_jan:ini_ano])]
-        for s in inicios:                                   # do mais distante para o mais próximo
-            meio = _MEIO.match(texto[s:ini_ano])
-            if not meio:
-                continue
-            cabeca = meio["cabeca"]
-            # descarta conectivos no começo ('no julgado' -> 'julgado')
-            c = re.match(rf"(?:{_CONECTORES}\s+)+", cabeca, re.I)
-            deslocamento = c.end() if c else 0
-            if _cabeca_valida(cabeca[deslocamento:]):
-                trib = meio["trib"] or meio["trib2"]
-                if trib:
-                    trib = sigla_tribunal(trib)
-                achados.append(Candidata(s + deslocamento, m.end("nome"), "incompleta", "jurisprudencia",
-                                         tribunal=trib, extra={"ano": int(m["ano"]), "relator": m["nome"]}))
-                break
+    for m in _RELATOR.finditer(texto):
+        ini_rel, fim = m.start(), m.end()
+        antes = _ANO_ANTES.search(texto[max(0, ini_rel - 40):ini_rel])
+        if antes:
+            ano = int(antes["ano"])
+            achou = _achar_cabeca(texto, max(0, ini_rel - 40) + antes.start("ano"), _MEIO_ANO)
+        else:
+            depois = _ANO_DEPOIS.match(texto[fim:fim + 40])
+            if not depois:
+                continue                                       # sem ano: não é a referência que buscamos
+            ano = int(depois["ano"])
+            fim += depois.end()
+            achou = _achar_cabeca(texto, ini_rel, _MEIO_REL)
+        if achou:
+            inicio, trib = achou
+            achados.append(Candidata(inicio, fim, "incompleta", "jurisprudencia", tribunal=trib,
+                                     extra={"ano": ano, "relator": m["nome"]}))
     return achados
 
 

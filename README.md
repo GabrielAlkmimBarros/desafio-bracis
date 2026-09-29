@@ -39,6 +39,12 @@ python scripts/estresse.py
 # 2c. evidência da calibração: acerto por situação x confiança adotada
 python scripts/calibracao.py
 
+# 2d. quanto cada perfil de confiança ganha/perde conforme a taxa de erro no conjunto oculto
+python scripts/cenarios_confianca.py
+
+# (opcional) outro perfil de confiança: recomendada (padrão) | calibrada | colega | um
+CONFIANCA_PERFIL=um python -m src.run --input data/txt --output out/um --db data/desafio1_bracis.db
+
 # 3. gerar o CSV de submissão do Kaggle
 python oficial/json_to_submission.py out/atual submission.csv
 ```
@@ -48,11 +54,14 @@ python oficial/json_to_submission.py out/atual submission.csv
 - [x] Estrutura, avaliador local com a métrica oficial, oráculo para testar o encanamento
 - [x] Índice da base canônica (`python scripts/testar_indice.py`: 77/77 reais achadas, 0 inventadas com candidato)
 - [x] Detecção de citações (níveis 1 e 2)
-- [x] Classificação (real / inventada / incompleta) — nota local 1,0997 (teto 1,100)
+- [x] Classificação (real / inventada / incompleta) — nota local 1,0999 (teto 1,100)
 - [x] Teste de estresse, 0 falhas (`python scripts/estresse.py`): os 996 acórdãos em 5 formatos fixos
       e em ruído de nível 2 combinado (abreviações, `n°/No/Nº`, número partido, OCR no número e na
       classe, quebras de linha), inventadas sintéticas, incompletas em 10 moldes, leis e súmulas da
-      base e fora dela, e distratores (autos, OAB, fls., valores) que não podem ser detectados
-- [x] Confiança calibrada por situação (`src/resolver.py`, tabela `CONFIANCA`): taxa de acerto
-      esperada em texto nunca visto, não ajuste às 26 peças (`python scripts/calibracao.py`)
+      base e fora dela (incl. 'SV', 'Súmula 331, IV, do TST', leis sem registro na base), incompletas
+      com o relator antes do ano ou entre parênteses, e distratores (autos, OAB, fls., valores, frases
+      sem citação) que não podem ser detectados
+- [x] Confiança por situação, em perfis (`src/resolver.py`, `PERFIS`): o padrão `recomendada` usa 0,99
+      onde nenhum teste jamais registrou erro e valores baixos onde há dúvida real sobre o rótulo
+      (`python scripts/calibracao.py`, `python scripts/cenarios_confianca.py`)
 - [ ] Dockerfile + entrypoint

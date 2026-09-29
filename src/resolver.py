@@ -6,23 +6,26 @@ Regra de contagem (do enunciado):
     2+ sem desempate       -> incompleta
     sem número             -> incompleta  (tribunal + ano + relator batem com vários acórdãos)
 
-Confiança: cada decisão cai numa SITUAÇÃO (tabela CONFIANCA abaixo), e a confiança é a taxa
-de acerto esperada dessa situação em textos nunca vistos — não um ajuste às 26 peças. O Brier
-é mínimo quando a confiança é igual à taxa de acerto; por isso nenhuma situação leva 1,0.
-Cada valor combina três evidências (ver `python scripts/calibracao.py`):
+Confiança: cada decisão cai numa SITUAÇÃO, e a confiança vem de um PERFIL (tabela situação ->
+valor, ver PERFIS abaixo). O Brier é mínimo quando a confiança é igual à taxa de acerto da
+situação em textos nunca vistos. Os valores combinam três evidências (`python scripts/calibracao.py`
+e `python scripts/cenarios_confianca.py`):
   - as 26 peças de desenvolvimento: acerto de 100% em todas as situações, mas otimista
     (o sistema foi depurado nelas);
   - o estresse sintético rodado na versão ANTERIOR às correções dele: variações que o sistema
     nunca tinha visto — pessimista, porque o ruído gerado é mais agressivo que o do desafio;
   - o modo de falha de cada situação (o que precisaria dar errado para a decisão errar).
 """
+import os
+
 from .indice import Ficha, Indice
 from .normalizar import dv_cnj_valido, eh_cnj, justica_cnj
 from .vocabulario import TRIBUNAIS_DA_CLASSE, classe_base
 
 _TRIBUNAL_DA_JUSTICA = {"5": "TST", "6": "TSE", "7": "STM"}
 
-CONFIANCA = {
+# Perfil "calibrada": taxa de acerto estimada com margem para o que nenhum teste cobre.
+_CALIBRADA = {
     # ---- real
     # Número único no tribunal, classe e UF conferem. Uma leitura errada quase nunca cai por acaso
     # em outro registro existente (estresse: 0 erros em ~2.000 citações ruidosas detectadas), e um
@@ -67,6 +70,40 @@ CONFIANCA = {
     # O que sobra depois das correções não tem rótulo conhecido: máxima incerteza.
     "incompleta: súmula sem tribunal": 0.50,
 }
+
+# Perfil "recomendada": ALTO (0,99) onde nenhum teste jamais registrou erro — 26 peças, estresse
+# atual, e o estresse rodado sobre duas versões que ainda não conheciam as variações (a anterior às
+# correções e a do colega); MÉDIO onde essas versões erraram (inventada em texto ruidoso, lei/súmula
+# inventada); BAIXO onde há dúvida real sobre o rótulo, que nenhum teste consegue medir.
+_RECOMENDADA = {
+    "real: número único": 0.99,
+    "real: lei ou súmula da base": 0.99,
+    "incompleta: sem número": 0.99,
+    "inventada: número ausente, texto limpo": 0.98,
+    "inventada: número ausente, texto com ruído": 0.95,
+    "inventada: lei ou súmula fora da base, texto limpo": 0.97,
+    "inventada: lei ou súmula fora da base, texto com ruído": 0.93,
+    "real: desempate por classe ou UF": 0.95,
+    "real: número único, classe ou UF divergem": 0.90,
+    "inventada: número só existe em outro tribunal": 0.85,
+    "inventada: tema": 0.85,
+    "inventada: CNJ com DV válido, ausente": 0.60,
+    "incompleta: número ambíguo": 0.60,
+    "incompleta: súmula sem tribunal": 0.50,
+    "real: duplicata de texto idêntico": 0.50,
+}
+
+PERFIS = {
+    "recomendada": _RECOMENDADA,
+    "calibrada": _CALIBRADA,
+    # como na versão do colega: 1,0 em tudo, menos as duas situações que não aparecem no gabarito
+    "colega": {k: (0.6 if k in ("incompleta: número ambíguo", "incompleta: súmula sem tribunal") else 1.0)
+               for k in _CALIBRADA},
+    "um": {k: 1.0 for k in _CALIBRADA},                    # 1,0 em tudo
+}
+# Para trocar de perfil: mude o padrão abaixo, ou rode com CONFIANCA_PERFIL=calibrada|colega|um.
+PERFIL = os.environ.get("CONFIANCA_PERFIL", "recomendada")
+CONFIANCA = PERFIS[PERFIL]
 
 
 def candidatos_acordao(ix: Indice, numero: str, classe: tuple, tribunal: str | None = None,
