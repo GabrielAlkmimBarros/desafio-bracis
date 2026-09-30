@@ -8,7 +8,8 @@ citar outros registros, possivelmente de outros jeitos. Seções:
   normas       as 5 súmulas e os 13 artigos, em várias redações + versões inexistentes (inventadas)
   incompletas  referências sem número (tribunal + ano + relator) em redações variadas
   inventadas   números aleatórios que não existem na base
-  falsos       frases com números que NÃO são citação (autos, OAB, fls., valores, datas...)
+  enumeracoes  'AgInt no AREsp nº 1/RJ e 2/SP': o 2º número, sem classe, tem de herdar a do 1º
+  falsos       frases com números que NÃO são citação (autos, OAB, fls., valores, datas, 'fls. 10 e 11'...)
 
 Resultados por formato:
   certo    -> detectou (sobreposição >= 0,5 com o trecho) e classificou certo (com o id certo, se real)
@@ -220,6 +221,25 @@ def casos_inventadas(ix, rng):
             yield "TST aleatório", f"RR-{cnj}", "inventada", None
 
 
+# ============================================================================ enumerações
+
+def casos_enumeracoes(ix, rng):
+    """'AgInt no AREsp nº 1.996.496/RJ e 1.996.497/SP': o 2º número não repete a classe e herda a do 1º.
+    Pares de mesmo tribunal e classe-base, porque o 'e' liga processos da mesma espécie."""
+    grupos = defaultdict(list)
+    for f in ix.fichas:
+        if f.natureza == "acordao" and f.numero and f.classe and "." not in f.numero \
+                and len(f.numero) >= 4 and len(ix.buscar_numero(f.numero)) == 1:
+            grupos[(f.tribunal, f.classe[-1])].append(f)
+    for fichas in grupos.values():
+        for a, b in zip(fichas[::2], fichas[1::2]):
+            siglas = [SIGLA_ESCRITA.get(s, s) for s in a.classe]
+            primeira = " no ".join(siglas) + f" nº {numero_com_pontos(a.numero)}" + (f"/{a.uf}" if a.uf else "")
+            segunda = numero_com_pontos(b.numero) + (f"/{b.uf}" if b.uf else "")
+            ids = {g.id for g in ix.fichas if g.assinatura == b.assinatura}
+            yield "2º número sem classe", segunda, "real", ids, f"Nesse sentido, {primeira} e "
+
+
 # ============================================================================ falsos positivos
 
 FRASES_SEM_CITACAO = [
@@ -244,6 +264,12 @@ FRASES_SEM_CITACAO = [
     "a decisão de 2019, proferida pelo juízo de origem, foi mantida",
     "o recurso foi interposto em 2021 pelo Ministério Público",
     "CEP 01310-100, telefone (11) 3333-4444",
+    # 'e' + número: a conjunção não é a classe 'Embargos'
+    "o pedido de fls. 10 e 11 foi indeferido",
+    "condenação ao pagamento de R$ 1.000 e 2.000 reais a título de multa",
+    "os artigos 5 e 7 tratam da matéria",
+    "nos prazos de 5 e 15 dias, respectivamente",
+    "FLS. 10 E 11 DOS AUTOS",
 ]
 
 
@@ -253,7 +279,8 @@ def casos_falsos(ix, rng):
 
 
 SECOES = {"acordaos": casos_acordaos, "normas": casos_normas,
-          "incompletas": casos_incompletas, "inventadas": casos_inventadas, "falsos": casos_falsos}
+          "incompletas": casos_incompletas, "inventadas": casos_inventadas,
+          "enumeracoes": casos_enumeracoes, "falsos": casos_falsos}
 
 
 def main():
@@ -268,13 +295,13 @@ def main():
             continue
         rng = random.Random(0)
         por_formato, falhas = {}, []
-        for formato, cit, esperado, ids in gerador(ix, rng):
+        for formato, cit, esperado, ids, *contexto in gerador(ix, rng):   # contexto: 'antes' opcional
             if esperado is None:                       # não pode detectar NADA na frase
                 achadas = detectar(cit)
                 res, motivo = ("certo", "") if not achadas else \
                     ("falhou", f"detectou {[(cit[c.inicio:c.fim], c.especie) for c in achadas]}")
             else:
-                res, motivo = conferir(ix, cit, esperado, ids)
+                res, motivo = conferir(ix, cit, esperado, ids, *contexto)
             por_formato.setdefault(formato, Counter())[res] += 1
             if res == "falhou":
                 falhas.append((formato, cit, motivo))

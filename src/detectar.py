@@ -7,6 +7,8 @@ Quatro espécies, cada uma com a sua estratégia:
               Só vira citação se à esquerda houver uma classe processual reconhecida
               ('AgInt no AREsp'). É isso que descarta 'fls. 790/829', 'OAB/BA 349745',
               'Processo nº 6706918-...' do cabeçalho: nenhum tem classe antes do número.
+              O 'e' solto é a conjunção, nunca a classe 'Embargos' ('fls. 10 e 11'); a única
+              exceção é 'REsp 1/SP e 2/RJ', em que o 2º número herda a classe do 1º.
   sumula      'Súmula 331 do TST' | 'Súmula Vinculante 10' | '5úmula 211 do STJ'
   artigo      'art. 373, I, do CPC' | 'artigo 7º, XXIX, da Constituição Fedcral'
   incompleta  'julgado do STF proferido em 2024 pela relatoria de Dias Toffoli'
@@ -121,9 +123,16 @@ def _classe_a_esquerda(texto: str, ini_num: int, janela: int = 130):
     """Procura, antes do número, a sequência de palavras mais longa que seja classe processual."""
     ini_jan = max(0, ini_num - janela)
     inicios = [ini_jan + m.start() for m in re.finditer(r"(?<!\S)\S", texto[ini_jan:ini_num])]
+    # 'e' colado no número é a conjunção ('fls. 10 e 11', 'REsp e 5 outros'), não a classe 'Embargos'
+    if inicios and re.fullmatch(r"[eE]\s*", texto[inicios[-1]:ini_num]):
+        return None
     for s in inicios:                                    # do mais distante para o mais próximo
+        if re.match(r"e(?!\S)", texto[s:ini_num]):       # 'e AREsp 12': a citação começa em 'AREsp'
+            continue
         siglas = canonizar_classe(texto[s:ini_num])
         conhecidas = [x for x in siglas if not x.startswith("?")]
+        if conhecidas == ["E"]:                          # 'E' sozinho não basta para ser classe
+            continue
         if conhecidas and classe_base(tuple(conhecidas)) and all(
                 not x.startswith("?") or _neutro(x) for x in siglas):
             # não começar a citação num conectivo solto ('no AgInt...' -> 'AgInt...')
@@ -144,13 +153,28 @@ def _uf_a_direita(texto: str, fim: int):
     return fim, None
 
 
+_ENUMERACAO = re.compile(r"\s*,?\s+e\s+(?:n[º°o.]+s?\s*)?", re.I)
+
+
+def _herda_classe(texto: str, anterior: Candidata, ini_num: int, num_bruto: str) -> bool:
+    """'REsp 1.234.567/SP e 1.234.568/RJ': o 2º número não repete a classe, herda a do 1º.
+    Só se um 'e' o cola ao acórdão anterior e ele tem cara de processo (4+ dígitos, não um ano):
+    é o que separa 'REsp 1.234.567 e 1.234.568' de 'REsp 1.234.567 e 10 dias'."""
+    return bool(_ENUMERACAO.fullmatch(texto[anterior.fim:ini_num])
+                and len(digitos(num_bruto)) >= 4
+                and not re.fullmatch(r"(?:19|20)\d\d", num_bruto.strip()))
+
+
 def detectar_acordaos(texto: str) -> list[Candidata]:
     achados = []
     for ini, fim in numeros_no_texto(texto):
         esq = _classe_a_esquerda(texto, ini)
-        if not esq:
+        if esq:
+            s, classe, trib = esq
+        elif achados and _herda_classe(texto, achados[-1], ini, texto[ini:fim]):
+            s, classe, trib = ini, achados[-1].classe, achados[-1].tribunal
+        else:
             continue
-        s, classe, trib = esq
         num_bruto = texto[ini:fim]
         # 'Rcl de 2021' é um ANO, não um número de processo -> quem cuida é o detector de incompletas
         if re.search(r"\b(?:de|em)\s*$", texto[s:ini], re.I) and re.fullmatch(r"(19|20)\d\d", num_bruto.strip()):
