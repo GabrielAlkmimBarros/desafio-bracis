@@ -12,6 +12,10 @@ de ponta a ponta — detecção (span com IoU >= 0,5, nada sobrando na frase) e 
   D  lei e súmula                        artigos e súmulas da base (real) e fora dela (inventada)
   E  distratores                         autos do cabeçalho, OAB, fls., protocolo, valor, CPF/CNPJ:
                                          nada pode ser detectado
+  F  redação real                        padrões de citação extraídos de decisões públicas do STJ
+                                         (scripts/padroes_redacao_real.json), com registros da base
+                                         (mesma cadeia oficial de classe, mesma base) e números inexistentes;
+                                         a resposta vem do cabeçalho bruto e do vocabulário oficial do STJ
 
 Resultados por frase:
     certo        -> classe certa (e, se real, o registro certo)
@@ -20,12 +24,15 @@ Resultados por frase:
     falhou       -> não detectou, span errado, sobrou citação espúria ou classificou errado
     GRAVE        -> (dentro de falhou) inventada classificada como real — o erro que a métrica pune
 
-Uso:  python scripts/estresse.py [--mostrar 20] [--secao A2]
+Uso:  python scripts/estresse.py [--mostrar 20] [--secao A2] [--db outro.db] [--situacoes] [--semente N]
 """
 import argparse
+import json
 import random
 import re
+import sqlite3
 import sys
+import unicodedata
 from collections import Counter
 from pathlib import Path
 
@@ -107,7 +114,11 @@ def ocr_em_palavras(s: str, rng: random.Random) -> str:
         return s
     i, ch = rng.choice(opcoes)
     troca = {"m": "rn", "o": "0", "O": "0", "l": "1", "S": "5"}[ch]     # rn<->m é confusão de minúscula
-    return s[:i] + troca + s[i + 1:]
+    novo = s[:i] + troca + s[i + 1:]
+    palavra = re.search(r"\S*$", novo[:i + len(troca)])[0] + re.match(r"\S*", novo[i + len(troca):])[0]
+    if sum(c.isalpha() for c in palavra) < 2:
+        return s                                # 'SS' -> '5S' seria indistinguível do número 55
+    return novo
 
 
 def numero_nivel2(num: str, rng: random.Random) -> str:
@@ -284,7 +295,7 @@ def relator_limpo(relator: str) -> str | None:
 def formatos_incompleta(f, rng):
     relator = relator_limpo(f.relator)
     base = classe_base(f.classe)
-    if not (relator and f.ano and base):
+    if not (relator and f.ano and base and f.tribunal in TRIB_EXTENSO):
         return
     molde = rng.choice(MOLDES_INCOMPLETA)
     if ("{E}" in molde and base not in _EXTENSO):
@@ -325,9 +336,11 @@ COMPLEMENTOS = ["", ", I", ", inciso I", ", § 1º", ", caput", ", parágrafo ú
 TRIB_EXTENSO = {"STJ": "Superior Tribunal de Justiça", "STF": "Supremo Tribunal Federal",
                 "TST": "Tribunal Superior do Trabalho", "TSE": "Tribunal Superior Eleitoral",
                 "STM": "Superior Tribunal Militar"}
-# artigos de leis que existem no mundo mas não têm registro na base: inventada (cobertura congelada)
-ARTIGOS_FORA_DA_BASE = ["art. 172 da Lei nº 9.504/1997", "art. 60 da Lei nº 13.467/2017", "art. 927 do Código Civil",
-                        "art. 121 do Código Penal", "art. 3º do CTN"]
+# artigos de leis que existem no mundo e costumam não ter registro na base: inventada se a base
+# não tiver o artigo, real se tiver (a expectativa é conferida na base usada, que pode ser outra)
+ARTIGOS_FORA_DA_BASE = [("art. 172 da Lei nº 9.504/1997", "L9504", 172), ("art. 60 da Lei nº 13.467/2017", "L13467", 60),
+                        ("art. 927 do Código Civil", "L10406", 927), ("art. 121 do Código Penal", "DL2848", 121),
+                        ("art. 3º do CTN", "L5172", 3)]
 
 
 def artigo_escrito(n: int, rng) -> str:
@@ -335,8 +348,16 @@ def artigo_escrito(n: int, rng) -> str:
     return f"{rng.choice(['art.', 'artigo', 'art', 'Art.'])} {num}"
 
 
+def nome_numerado(lei: str) -> str:
+    """Lei que o vocabulário não conhece (base nova): cita pelo número — 'L8112' -> 'Lei nº 8.112'."""
+    if lei == "CF":
+        return "Constituição Federal"
+    tipo, num = re.match(r"(LC|DL|L)(\d+)", lei).groups()
+    return f"{ {'LC': 'Lei Complementar', 'DL': 'Decreto-Lei', 'L': 'Lei'}[tipo]} nº {numero_com_pontos(num)}"
+
+
 def formatos_artigo(lei, n, rng):
-    for nome in NOMES_LEI[lei]:
+    for nome in NOMES_LEI.get(lei, [nome_numerado(lei)]):
         s = f"{artigo_escrito(n, rng)}{rng.choice(COMPLEMENTOS)}, {rng.choice(['do', 'da'])} {nome}"
         yield "artigo", s.replace(", do", " do").replace(", da", " da") if rng.random() < 0.5 else s
         yield "artigo nível 2", quebrar_linha(ruido_ocr_curto(s, rng), rng)
@@ -360,7 +381,7 @@ def formatos_sumula(trib, vinc, n, rng):
     else:
         formas = [f"Súmula {n} do {trib}", f"Súmula nº {n} do {trib}", f"Súmula n. {n}/{trib}",
                   f"Súmula {n}/{trib}", f"Súm. {n} do {trib}", f"SÚMULA {n} DO {trib}",
-                  f"Súmula {n} do {TRIB_EXTENSO[trib]}", f"Enunciado {n} da Súmula do {trib}",
+                  f"Súmula {n} do {TRIB_EXTENSO.get(trib, trib)}", f"Enunciado {n} da Súmula do {trib}",
                   f"verbete {n} da Súmula do {trib}", f"Súmula {n}, I, do {trib}",
                   f"Súmula nº {n}, item I, do {trib}", f"Súmula {n}, inciso IV, do {trib}",
                   f"Enunciado {n} da Súmula de Jurisprudência Dominante do {trib}"]
@@ -430,14 +451,115 @@ def formatos_distrator(rng):
     yield "distrator prosa", f"conforme os itens {rng.randrange(1, 9)} e {rng.randrange(1, 9)} do contrato"
 
 
+# ---- redação real (padrões de decisões públicas do STJ)
+
+def _sa(s):
+    return "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c)).upper()
+
+
+def formatos_redacao_real(caminho_db, rng):
+    """Instancia os padrões reais com a verdade tirada do cabeçalho BRUTO da base e do vocabulário oficial
+    do STJ — sem usar o índice nem o vocabulário do sistema. Gera (nome, citação, esperado, ids, núcleo)."""
+    P = json.loads((RAIZ / "scripts" / "padroes_redacao_real.json").read_text(encoding="utf-8"))
+    oficial = P["classes_oficiais_stj"]
+    desc = {s: _sa(d) for s, d in oficial.items() if " " not in s}
+    for s, d in oficial.items():                      # 'AgInt na Rcl' = 'AGRAVO INTERNO NA RECLAMACAO' -> Rcl
+        m, dm = re.match(r"AgInt n[oa]s? (\S+)$", s), re.match(r"AGRAVO INTERNO N[OA]S? (.+)$", _sa(d))
+        if m and dm:
+            desc.setdefault(m[1], dm[1])
+    bases = sorted(desc, key=lambda b: -len(desc[b]))
+    con = sqlite3.connect(caminho_db)
+    linhas = con.execute("SELECT id, tribunal, natureza, texto FROM documentos").fetchall()
+    con.close()
+    nums_cab = Counter(re.sub(r"\D", "", x) for _, _, _, t in linhas for x in re.findall(r"\d[\d.\-]{2,}\d", t[:700]))
+    por_cadeia, por_base, normas = {}, {}, {}
+    for id_, trib, natureza, t in linhas:
+        if natureza != "acordao":
+            primeira = t.strip().split("\n", 1)[0]
+            n = re.search(r"\d+", primeira)
+            if not n:
+                continue
+            if natureza == "sumula":
+                vinc = "VINCULANTE" in primeira.upper()
+                normas[("sumula", "STF" if vinc else (trib or "").upper(), vinc, int(n[0]))] = id_
+            else:
+                # a lei do registro: número depois de 'nº', a Constituição ou um nome público de lei
+                numero_lei = re.search(r"n[º°o.]\s*([\d.]+)", primeira)
+                nomes = sorted(((nome, num) for num, ns in P["nomes_publicos_das_leis"].items() for nome in ns),
+                               key=lambda x: -len(x[0]))
+                lei = numero_lei[1].replace(".", "") if numero_lei else \
+                    "CF" if re.search(r"CONSTITUI|\bCF\b|\bCRFB\b", primeira.upper()) else \
+                    next((num for nome, num in nomes if nome.upper() in primeira.upper()), "")
+                if lei:
+                    normas[("artigo", lei, int(n[0]))] = id_
+            continue
+        if trib != "STJ":
+            continue
+        h = re.sub(r"\s+", " ", t[:400].replace("Superior Tribunal de Justiça", " ")).strip()
+        m = re.match(r"(?P<cls>.+?)\s+N[º°]\s*(?P<num>[\d.]+)\s*-\s*(?P<uf>[A-Z]{2})\b", h)
+        base = m and next((b for b in bases if _sa(m["cls"]).endswith(desc[b])), None)
+        if not base:
+            continue
+        pref = re.sub(r"\s+", " ", m["cls"][: len(m["cls"]) - len(desc[base])]).strip()
+        num = re.sub(r"\D", "", m["num"])
+        if nums_cab[num] != 1:
+            continue                                  # número em 2+ cabeçalhos: sem resposta única
+        reg = (id_, num, m["uf"])
+        por_cadeia.setdefault((pref + " " + base).strip(), []).append(reg)
+        por_base.setdefault(base, []).append(((pref + " " + base).strip(), reg))
+
+    def fmt(num, estilo):
+        return f"{int(num):,}".replace(",", ".") if estilo == "pontos" else num
+    relatores = ["Nancy Andrighi", "Herman Benjamin", "Og Fernandes", "Ribeiro Dantas"]
+    for pre, cls, nn, estilo, uf, cauda in P["acordao"]:
+        cauda = cauda.replace("{R}", rng.choice(relatores)).replace("{D}", str(rng.randint(1, 28)))
+        base = cls.split()[-1]
+        casos = []
+        if por_cadeia.get(cls):
+            casos.append(("real: mesma cadeia oficial", rng.choice(por_cadeia[cls])))
+        outras = [r for c, r in por_base.get(base, []) if c != cls]
+        if outras:
+            casos.append(("real: mesma base", rng.choice(outras)))
+        while True:
+            falso = str(rng.randrange(10 ** 5, 10 ** 7))
+            if falso not in nums_cab:
+                break
+        casos.append(("inventada", (None, falso, rng.choice(["SP", "RJ", "MG"]))))
+        for nome, (id_, num, ufr) in casos:
+            nucleo = cls + nn + fmt(num, estilo) + uf.replace("{UF}", ufr)
+            yield ("acórdão " + nome, pre + nucleo + cauda, "real" if id_ else "inventada",
+                   {id_} if id_ else set(), (len(pre), len(pre) + len(nucleo)))
+    lei_de = {nome.upper(): num for num, nomes in P["nomes_publicos_das_leis"].items() for nome in nomes}
+    for art, resto, lei in P["artigo"]:
+        numlei = lei_de.get(lei.upper())
+        reais = [k for k in normas if k[0] == "artigo" and k[1] == numlei]
+        existentes = {k[2] for k in reais}
+        for chave in ([rng.choice(reais)] if reais else []) + [None]:
+            n = chave[2] if chave else rng.choice([x for x in range(2, 700) if x not in existentes])
+            cit = f"{art} {n}{resto}{lei}"
+            yield ("artigo " + ("real" if chave else "inventado"), cit, "real" if chave else "inventada",
+                   {normas[chave]} if chave else set(), None)
+    for cab, mid, suf, trib in P["sumula"]:
+        t_sig = {"Superior Tribunal de Justiça": "STJ", "Supremo Tribunal Federal": "STF"}.get(trib, trib)
+        vinc = "INCULANTE" in mid.upper()
+        reais = [k for k in normas if k[0] == "sumula" and k[1] == t_sig and k[2] == vinc]
+        existentes = {k[3] for k in normas if k[0] == "sumula" and k[1] == t_sig}
+        for chave in ([rng.choice(reais)] if reais else []) + [None]:
+            n = chave[3] if chave else rng.choice([x for x in range(100, 999) if x not in existentes])
+            yield ("súmula " + ("real" if chave else "inventada"), f"{cab}{mid}{n}{suf}{trib}",
+                   "real" if chave else "inventada", {normas[chave]} if chave else set(), None)
+
+
 # ============================================================================ conferência
 
-def conferir(cit: str, rng, ix):
-    """Encaixa a citação numa frase, roda detector + resolvedor e devolve (resultado, citação achada)."""
+def conferir(cit: str, rng, ix, nucleo=None):
+    """Encaixa a citação numa frase, roda detector + resolvedor e devolve (resultado, citação achada).
+    `nucleo` = (início, fim) do trecho que o gabarito anotaria, dentro de `cit` (padrão: tudo)."""
     molde = rng.choice(MOLDURAS)
     antes = molde.index("{c}")
     texto = molde.format(c=cit)
-    alvo = {"inicio": antes, "fim": antes + len(cit)}
+    a, b = nucleo or (0, len(cit))
+    alvo = {"inicio": antes + a, "fim": antes + b}
     cs = detectar(texto)
     casadas = [c for c in cs if _iou(alvo, {"inicio": c.inicio, "fim": c.fim}) >= 0.5]
     sobras = [texto[c.inicio:c.fim] for c in cs if c not in casadas]
@@ -465,17 +587,25 @@ def julgar(r, problema, esperado, ids_ok):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mostrar", type=int, default=15)
-    ap.add_argument("--secao", choices=["A", "A2", "B", "C", "D", "E"], help="rodar só uma seção")
+    ap.add_argument("--secao", choices=["A", "A2", "B", "C", "D", "E", "F"], help="rodar só uma seção")
+    ap.add_argument("--situacoes", action="store_true", help="tabela de casos e erros por situação do resolvedor")
+    ap.add_argument("--semente", type=int, default=0, help="outra semente: outros sorteios de ruído e de casos")
+    ap.add_argument("--db", default=str(RAIZ / "data" / "desafio1_bracis.db"), help="base a usar")
     args = ap.parse_args()
     # um gerador por seção: rodar só uma seção (--secao) reproduz exatamente as mesmas frases
-    rngs = {s: random.Random(s) for s in ("A", "A2", "B", "C", "D", "E")}
-    ix = Indice(str(RAIZ / "data" / "desafio1_bracis.db"))
+    rngs = {s: random.Random(f"{s}{args.semente or ''}") for s in ("A", "A2", "B", "C", "D", "E", "F")}
+    ix = Indice(args.db)
     placar: dict[tuple, Counter] = {}
     falhas = []
 
-    def registrar(secao, nome, cit, esperado, ids_ok):
-        r, problema = conferir(cit, rngs[secao], ix)
+    por_situacao: dict[str, Counter] = {}
+
+    def registrar(secao, nome, cit, esperado, ids_ok, nucleo=None):
+        r, problema = conferir(cit, rngs[secao], ix, nucleo)
         res = julgar(r, problema, esperado, ids_ok)
+        if r is not None and res != "ambígua" and not problema:
+            sit = r["motivo"][1:r["motivo"].index("]")]
+            por_situacao.setdefault(sit, Counter())[res == "certo"] += 1
         cont = placar.setdefault((secao, nome), Counter())
         cont[res] += 1
         if res == "falhou":
@@ -505,8 +635,9 @@ def main():
         for nome, cit in formatos_inventada_aleatoria(ix, rngs["B"]):
             registrar("B", nome, cit, "inventada", set())
     if quer("D"):
-        for cit in ARTIGOS_FORA_DA_BASE:
-            registrar("D", "artigo de lei fora da base", cit, "inventada", set())
+        for cit, lei, n in ARTIGOS_FORA_DA_BASE:
+            f = ix.buscar_norma(("artigo", lei, n))
+            registrar("D", "artigo de lei fora da base", cit, "real" if f else "inventada", {f.id} if f else set())
         for chave, f in sorted(ix.por_norma.items(), key=str):
             rng = rngs["D"]
             if chave[0] == "artigo":
@@ -533,12 +664,20 @@ def main():
         for cit in FRASES_SEM_CITACAO:
             registrar("E", "frase sem citação", cit, None, set())
 
+    if quer("F"):
+        for nome, cit, esperado, ids, nucleo in formatos_redacao_real(args.db, rngs["F"]):
+            registrar("F", nome, cit, esperado, ids, nucleo)
+
     print(f"{'seção':<6}{'formato':<28}{'certo':>7}{'ambígua':>9}{'falhou':>8}{'GRAVE':>7}")
     total_falhas = 0
     for (secao, nome), c in placar.items():
         total_falhas += c["falhou"]
         print(f"{secao:<6}{nome:<28}{c['certo']:>7}{c['ambígua']:>9}{c['falhou']:>8}{c['GRAVE']:>7}")
     print(f"\ntotal de falhas: {total_falhas}")
+    if args.situacoes:
+        print(f"\n{'situação (citações detectadas)':<56}{'n':>7}{'erros':>7}")
+        for sit, c in sorted(por_situacao.items()):
+            print(f"{sit:<56}{c[True] + c[False]:>7}{c[False]:>7}")
     if falhas:
         print(f"\nprimeiras {args.mostrar} falhas:")
         for x in falhas[:args.mostrar]:

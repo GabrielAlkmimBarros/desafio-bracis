@@ -22,7 +22,8 @@ from .indice import Ficha, Indice
 from .normalizar import dv_cnj_valido, eh_cnj, justica_cnj
 from .vocabulario import TRIBUNAIS_DA_CLASSE, classe_base
 
-_TRIBUNAL_DA_JUSTICA = {"5": "TST", "6": "TSE", "7": "STM"}
+# dígito J do número CNJ (Resolução CNJ 65/2008) -> tribunal superior
+_TRIBUNAL_DA_JUSTICA = {"1": "STF", "3": "STJ", "5": "TST", "6": "TSE", "7": "STM"}
 
 # Perfil "calibrada": taxa de acerto estimada com margem para o que nenhum teste cobre.
 _CALIBRADA = {
@@ -93,7 +94,47 @@ _RECOMENDADA = {
     "real: duplicata de texto idêntico": 0.50,
 }
 
+# Perfil "padrao" (o usado): 1,0 em toda situação em que NENHUMA fonte mostrou erro do código atual;
+# valor menor só onde houve erro ou há dúvida real sobre o rótulo. Fontes (n / erros do código atual):
+#   E = estresse, 41 sorteios na base original + 7 bases modificadas (inclui a seção F: redação REAL de
+#       decisões públicas do STJ)     B = 26 peças x 7 bases     M = metamórfico, 26 peças x 8 transformações
+#   D = 26 peças do desenvolvimento
+#   situação                                          E           B        M       D
+#   real: número único                          297074/0      436/0    608/0    76/0
+#   real: número único, classe ou UF divergem     9916/0        -        -        -
+#   real: desempate por classe ou UF              2961/0        6/0      8/0     1/0
+#   real: lei ou súmula da base                  32170/0      109/0    152/0    19/0
+#   incompleta: sem número                       92682/0      224/0    256/0    32/0
+#   inventada: número ausente, texto limpo       91890/0      264/0    240/0    32/0
+#   inventada: número ausente, com ruído         40767/4       87/0     96/0    10/0   -> 0,99
+#   inventada: lei/súmula fora, texto limpo      30369/0      124/0    116/0    15/0
+#   inventada: lei/súmula fora, com ruído         4298/0       47/0     52/0     6/0
+#   inventada: CNJ com DV válido, ausente          675/0       40/0       -        -
+# Os 4 erros são ambiguidades genuínas entre sigla e número com OCR ('RHC SS. 413' = 55.413 ou classe
+# SS?; '5LS 2.883'; '68. 2GO' = 68.260 ou UF GO?). Fora da tabela, também sem erro: transplante de 8.106
+# citações com redação real e resposta conhecida; auditoria cega de 180 detecções em 19 milhões de
+# caracteres de decisões reais do STJ; fuzzing de 6.000 textos (nenhum erro de execução).
+_PADRAO = {
+    "real: número único": 1.0,
+    "real: número único, classe ou UF divergem": 1.0,
+    "real: desempate por classe ou UF": 1.0,
+    "real: lei ou súmula da base": 1.0,
+    "incompleta: sem número": 1.0,
+    "inventada: número ausente, texto limpo": 1.0,
+    "inventada: número ausente, texto com ruído": 0.99,      # 4 erros em 40.960 (acerto 0,9999), para baixo
+    "inventada: lei ou súmula fora da base, texto limpo": 1.0,
+    "inventada: lei ou súmula fora da base, texto com ruído": 1.0,
+    "inventada: CNJ com DV válido, ausente": 1.0,
+    # dúvida real sobre o rótulo (nenhum teste consegue medir a resposta certa)
+    "inventada: tema": 0.90,                        # 16/0, mas todas réplicas de UM exemplo rotulado
+    "inventada: número só existe em outro tribunal": 0.85,  # nunca observada
+    "incompleta: número ambíguo": 0.60,             # nunca observada com rótulo verdadeiro
+    "incompleta: súmula sem tribunal": 0.50,        # nunca observada no código atual; errou sempre nas antigas
+    "real: duplicata de texto idêntico": 0.50,      # escolha entre textos idênticos é cara ou coroa
+}
+
 PERFIS = {
+    "padrao": _PADRAO,
     "recomendada": _RECOMENDADA,
     "calibrada": _CALIBRADA,
     # como na versão do colega: 1,0 em tudo, menos as duas situações que não aparecem no gabarito
@@ -101,8 +142,8 @@ PERFIS = {
                for k in _CALIBRADA},
     "um": {k: 1.0 for k in _CALIBRADA},                    # 1,0 em tudo
 }
-# Para trocar de perfil: mude o padrão abaixo, ou rode com CONFIANCA_PERFIL=calibrada|colega|um.
-PERFIL = os.environ.get("CONFIANCA_PERFIL", "recomendada")
+# Para trocar de perfil: mude o padrão abaixo, ou rode com CONFIANCA_PERFIL=recomendada|calibrada|colega|um.
+PERFIL = os.environ.get("CONFIANCA_PERFIL", "padrao")
 CONFIANCA = PERFIS[PERFIL]
 
 
@@ -113,16 +154,23 @@ def candidatos_acordao(ix: Indice, numero: str, classe: tuple, tribunal: str | N
     cands = ix.buscar_numero(numero)
     passos = [f"número:{len(cands)}"]
 
-    # 1) tribunal: dito na citação, implícito no CNJ (dígito J) ou implícito na classe
+    # 1) tribunal: dito na citação, implícito no CNJ (dígito J) ou implícito na classe. O mapa fixo
+    #    classe -> tribunal é somado ao que a própria base mostra; se nada se sabe, não filtra.
     tribs = None
     if tribunal:
         tribs = {tribunal}
     elif eh_cnj(numero):
-        tribs = {_TRIBUNAL_DA_JUSTICA.get(justica_cnj(numero))}
-    elif classe_base(classe) in TRIBUNAIS_DA_CLASSE:
-        tribs = TRIBUNAIS_DA_CLASSE[classe_base(classe)]
-    if tribs:
-        cands = [f for f in cands if f.tribunal in tribs]
+        t = _TRIBUNAL_DA_JUSTICA.get(justica_cnj(numero))
+        tribs = {t} if t else None
+    else:
+        base = classe_base(classe)
+        tribs = (TRIBUNAIS_DA_CLASSE.get(base, set()) | ix.tribunais_da_classe.get(base, set())) or None
+    if tribs:                                   # registro sem tribunal na base não é descartado
+        filtrados = [f for f in cands if f.tribunal in tribs or not f.tribunal]
+        # número CNJ é único por construção (embute justiça, tribunal e origem): se o tribunal gravado na
+        # base não bate com o do número, vale o número. Número simples coincide entre tribunais; ali o
+        # filtro protege contra a coincidência e pode zerar os candidatos.
+        cands = filtrados if (filtrados or not eh_cnj(numero)) else cands
         passos.append(f"tribunal:{len(cands)}")
 
     # 2) desempates, só se ainda houver mais de um

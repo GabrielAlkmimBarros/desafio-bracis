@@ -11,7 +11,7 @@ import unicodedata
 # é ruído recuperável.
 _OCR_DIGITO = str.maketrans({
     "O": "0", "o": "0", "Q": "0", "D": "0",
-    "l": "1", "I": "1", "i": "1", "|": "1", "!": "1",
+    "l": "1", "L": "1", "I": "1", "i": "1", "|": "1", "!": "1",
     "S": "5", "s": "5",
     "g": "9", "q": "9",
     "G": "6", "b": "6",
@@ -73,7 +73,7 @@ def dv_cnj_valido(numero: str) -> bool:
 
 # ----------------------------------------------------------------------------- extrair número de um trecho
 
-_LETRAS_OCR = set("OoQDlIi|!SsgqGbBZz")
+_LETRAS_OCR = set("OoQDlLIi|!SsgqGbBZz")
 
 
 def _tipo_pedaco(p: str):

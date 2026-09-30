@@ -11,6 +11,7 @@ O índice da base é montado uma vez só, no começo (≈1 s).
 """
 import argparse
 import json
+import sys
 from pathlib import Path
 
 SCHEMA_VERSION = "1.2"
@@ -78,6 +79,7 @@ def main() -> None:
 
     from .indice import Indice
     indice = Indice(args.db)
+    print(indice.resumo(), file=sys.stderr)          # diagnóstico da base recebida (não entra na saída)
 
     for arq in arquivos:
         texto = ler_texto(arq)

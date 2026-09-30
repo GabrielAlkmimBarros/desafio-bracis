@@ -22,7 +22,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 
 from .normalizar import digitos, dv_cnj_valido, eh_cnj, justica_cnj, numero_canonico, sem_acento
-from .vocabulario import canonizar_classe
+from .vocabulario import canonizar_classe, classe_base
 
 
 @dataclass
@@ -105,7 +105,7 @@ def _cabecalho_cnj(texto, justica):
             antigo, _, resto = resto.partition("(")
             resto = resto.partition(")")[0]
         numero = numero_canonico(resto)
-        if not (eh_cnj(numero) and justica_cnj(numero) == justica):
+        if not (eh_cnj(numero) and (justica is None or justica_cnj(numero) == justica)):
             continue
         classe = re.split(r"ACÓRDÃO|ACORDAO|Pleno|STM|\d{2}/\d{2}/\d{4}", m["classe"])[-1]
         uf = re.match(r"\s*/\s*([A-Z]{2})\b", h[m.end():])
@@ -143,7 +143,45 @@ def _cnj_mais_frequente(texto, justica):
     return Counter(nums).most_common(1)[0][0] if nums else None
 
 
+_NOMES_NO_TEXTO = {"STJ": r"SUPERIOR TRIBUNAL DE JUSTI[ÇC]A", "STF": r"SUPREMO TRIBUNAL FEDERAL",
+                   "TST": r"TRIBUNAL SUPERIOR DO TRABALHO|\bTST\s*-", "TSE": r"TRIBUNAL SUPERIOR ELEITORAL",
+                   "STM": r"SUPERIOR TRIBUNAL MILITAR"}
+
+
+def _tribunal_pelo_texto(texto: str) -> str | None:
+    """Para registro sem tribunal (ou com tribunal desconhecido): o tribunal mais nomeado no início do texto."""
+    t = texto[:3000].upper()
+    contagem = {sig: len(re.findall(rx, t)) for sig, rx in _NOMES_NO_TEXTO.items()}
+    melhor = max(contagem, key=contagem.get)
+    if contagem[melhor]:
+        return melhor
+    # sem nome de tribunal: a justiça (dígito J) mais frequente nos números CNJ válidos do texto
+    js = [x["j"] for x in re.finditer(_CNJ, _espacos(texto))
+          if (n := numero_canonico(x["cnj"])) and dv_cnj_valido(n)]
+    j = Counter(js).most_common(1)[0][0] if js else None
+    return {"5": "TST", "6": "TSE", "7": "STM"}.get(j)
+
+
 # ----------------------------------------------------------------------------- normas
+
+def _chave_pelo_detector(texto: str, natureza: str, tribunal: str | None):
+    """Identifica a norma pela primeira linha do registro, com as MESMAS funções que leem a citação
+    nas peças — assim 'Súmula nº 7 do STJ', 'SÚMULA 7 DO STJ', 'Art. 5º da CF/88' e 'Artigo 5º da
+    Constituição Federal de 1988' viram a mesma chave dos dois lados. Súmula sem tribunal no cabeçalho
+    usa a coluna `tribunal` do próprio registro."""
+    from .detectar import detectar_artigos, detectar_sumulas, sigla_tribunal   # (detectar não importa indice)
+    primeira = texto.strip().split("\n", 1)[0][:300]
+    if natureza == "sumula":
+        for c in detectar_sumulas(primeira):
+            if c.chave_norma:
+                return c.chave_norma
+            n = (re.findall(r"\d+", primeira[c.inicio:c.fim]) or [""])[-1]
+            if tribunal and n:                   # 'Súmula 7' sem tribunal no cabeçalho: usa a coluna do registro
+                return ("sumula", sigla_tribunal(tribunal), False, int(n))
+        return None
+    cs = detectar_artigos(primeira)
+    return cs[0].chave_norma if cs else None
+
 
 def _chave_sumula(texto):
     m = re.match(r"\s*Súmula\s+(Vinculante\s+)?n\.?\s*(\d+)\s+do\s+(STF|STJ|TST|TSE)", texto, re.I)
@@ -180,20 +218,25 @@ class Indice:
         self.fichas: list[Ficha] = []
         self.por_numero: dict[str, list[Ficha]] = defaultdict(list)
         self.por_norma: dict[tuple, Ficha] = {}
+        self.tribunais_da_classe: dict[str, set] = defaultdict(set)   # classe-base -> tribunais NA BASE
         con = sqlite3.connect(caminho_db)
         linhas = con.execute("SELECT id, documento_id, tribunal, natureza, ano, relator, texto "
                              "FROM documentos ORDER BY documento_id").fetchall()
         con.close()
         for id_, doc, trib, natureza, ano, relator, texto in linhas:
+            trib = trib.strip().upper() if isinstance(trib, str) and trib.strip() else None
             f = Ficha(id=id_, documento_id=doc, tribunal=trib, natureza=natureza, ano=ano, relator=relator,
                       assinatura=hashlib.md5(texto.encode("utf-8")).hexdigest())
             if natureza == "acordao":
                 self._ler_acordao(f, texto)
+                if f.classe and f.tribunal:
+                    self.tribunais_da_classe[classe_base(f.classe)].add(f.tribunal)
                 for n in [f.numero, *f.apelidos]:
                     if n:
                         self.por_numero[n].append(f)
             else:
-                f.chave_norma = _chave_sumula(texto) if natureza == "sumula" else _chave_artigo(texto)
+                f.chave_norma = (_chave_pelo_detector(texto, natureza, trib) or
+                                 (_chave_sumula(texto) if natureza == "sumula" else _chave_artigo(texto)))
                 if f.chave_norma:
                     self.por_norma[f.chave_norma] = f
                 else:
@@ -201,14 +244,22 @@ class Indice:
             self.fichas.append(f)
 
     def _ler_acordao(self, f: Ficha, texto: str):
-        leitor = {
+        leitores = {
             "STJ": _cabecalho_stj,
             "STF": _cabecalho_stf,
             "TSE": lambda t: _cabecalho_cnj(t, "6"),
             "STM": lambda t: _cabecalho_cnj(t, "7"),
             "TST": _cabecalho_tst,
-        }[f.tribunal]
-        r = leitor(texto) or dict(classe="", numero=None, uf=None, apelidos=[])
+        }
+        if f.tribunal in leitores:
+            r = leitores[f.tribunal](texto)
+        else:                                  # tribunal desconhecido ou nulo: o que o próprio texto nomeia
+            pelo_texto = _tribunal_pelo_texto(texto)
+            f.avisos.append(f"tribunal {f.tribunal!r} desconhecido; pelo texto: {pelo_texto}")
+            ordem = ([leitores[pelo_texto]] if pelo_texto else []) + \
+                [_cabecalho_stj, _cabecalho_stf, lambda t: _cabecalho_cnj(t, None), _cabecalho_tst]
+            r = next((x for x in (ler(texto) for ler in ordem) if x and x["numero"]), None)
+        r = r or dict(classe="", numero=None, uf=None, apelidos=[])
         justica = {"TST": "5", "TSE": "6", "STM": "7"}.get(f.tribunal)
         cnj_quebrado = r["numero"] and eh_cnj(r["numero"]) and not dv_cnj_valido(r["numero"])
         if justica and (not r["numero"] or cnj_quebrado):
@@ -242,7 +293,12 @@ class Indice:
         acord = [f for f in self.fichas if f.natureza == "acordao"]
         sem_num = [f for f in acord if not f.numero]
         colisoes = {n: fs for n, fs in self.por_numero.items() if len(fs) > 1}
-        linhas = [f"{len(self.fichas)} registros: {len(acord)} acórdãos, {len(self.por_norma)} normas identificadas",
+        normas = [f for f in self.fichas if f.natureza != "acordao"]
+        sem_chave = [f.documento_id for f in normas if not f.chave_norma]
+        linhas = [f"{len(self.fichas)} registros: {len(acord)} acórdãos, {len(normas)} normas "
+                  f"({len(self.por_norma)} identificadas)",
                   f"acórdãos sem número extraído: {len(sem_num)}",
                   f"números com mais de um registro: {len(colisoes)}"]
+        if sem_chave:
+            linhas.append(f"normas NÃO identificadas (citações a elas sairão como inventada): {sem_chave[:10]}")
         return "\n".join(linhas)

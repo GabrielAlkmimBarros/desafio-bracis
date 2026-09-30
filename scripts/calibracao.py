@@ -14,38 +14,48 @@ ainda não tinha visto:
     git worktree add /tmp/pre 61cedf0 && ln -s "$PWD/data" /tmp/pre/data
     python scripts/calibracao.py --raiz /tmp/pre
 
-Uso:  python scripts/calibracao.py [--raiz CAMINHO]
+Com --db, o estresse é gerado a partir de outra base (ex.: as bases modificadas de
+scripts/bancos_modificados.py --manter PASTA); as 26 peças só entram com a base original.
+
+Uso:  python scripts/calibracao.py [--raiz CAMINHO] [--db BASE]
 """
 import argparse
 import random
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
+# mesmo critério de ruído do detector atual (src/detectar.py, tem_ruido), para versões antigas
+_RUIDO = re.compile(r"\n|\d\s+\d|\d\s*[.\-]\s+\d|\d[.\-]\s*[.\-]|(?<=\d)[^\W\doaºª°_]|[^\W\d_ºª°](?=\d)")
 
 
-def situacao(c, r) -> str:
+def situacao(c, r, trecho="") -> str:
     """A situação vem no começo do motivo ('[real: número único] ...'). Versões antigas do resolvedor
-    não a escrevem; aí ela é deduzida do caminho da decisão."""
+    não a escrevem; aí ela é deduzida do caminho da decisão, com os mesmos nomes das atuais sempre que
+    possível (real de acórdão fica agregado: a versão antiga não separa único/desempate)."""
     m = r.get("motivo", "")
     if m.startswith("["):
         return m[1:m.index("]")]
-    cl = r["classificacao"]
+    cl, ruido = r["classificacao"], ("texto com ruído" if _RUIDO.search(trecho) else "texto limpo")
     if c.especie in ("sumula", "artigo"):
-        return "incompleta: súmula sem tribunal" if cl == "incompleta" else f"{cl}: lei ou súmula (antigo)"
+        if cl == "incompleta":
+            return "incompleta: súmula sem tribunal"
+        return "real: lei ou súmula da base" if cl == "real" else f"inventada: lei ou súmula fora da base, {ruido}"
     if c.especie == "tema":
         return "inventada: tema"
     if c.especie == "incompleta":
         return "incompleta: sem número"
     if cl == "real":
-        return "real (antigo)"
-    return "inventada: acórdão (antigo)" if cl == "inventada" else "incompleta: número ambíguo"
+        return "real: acórdão (versão antiga, agregado)"
+    return f"inventada: número ausente, {ruido}" if cl == "inventada" else "incompleta: número ambíguo"
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--raiz", type=Path, default=RAIZ, help="cópia do código a medir (padrão: esta)")
+    ap.add_argument("--db", type=Path, default=RAIZ / "data" / "desafio1_bracis.db", help="base (padrão: a original)")
     args = ap.parse_args()
     # o código medido vem da --raiz e é importado PRIMEIRO: o estresse, importado depois,
     # reaproveita esse mesmo pacote `src` já carregado
@@ -59,12 +69,13 @@ def main():
     import kaggle_metric as km                          # noqa: E402
     from avaliar import carregar_gabarito              # noqa: E402
 
-    ix = Indice(str(RAIZ / "data" / "desafio1_bracis.db"))
+    ix = Indice(str(args.db))
     dev, est = defaultdict(Counter), defaultdict(Counter)
+    base_original = args.db.resolve() == (RAIZ / "data" / "desafio1_bracis.db").resolve()
 
     # ---- 26 peças
     g = carregar_gabarito()
-    for arq in sorted((RAIZ / "data" / "txt").glob("*.txt")):
+    for arq in sorted((RAIZ / "data" / "txt").glob("*.txt")) if base_original else []:
         with open(arq, encoding="utf-8", newline="") as fh:
             texto = fh.read()
         golds = [dict(inicio=r.inicio, fim=r.fim, classe=r.classificacao, id=r.id_canonico)
@@ -76,7 +87,7 @@ def main():
         for gi, pi in pares:
             gd, r = golds[gi], rs[pi]
             ok = r["classificacao"] == gd["classe"] and (gd["classe"] != "real" or str(r["id_canonico"]) == gd["id"])
-            dev[situacao(cs[pi], r)][ok] += 1
+            dev[situacao(cs[pi], r, texto[cs[pi].inicio:cs[pi].fim])][ok] += 1
 
     # ---- estresse (mesmos geradores e sementes do scripts/estresse.py)
     rngs = {s: random.Random(s) for s in ("A2", "B", "C", "D")}
@@ -93,7 +104,7 @@ def main():
         if esperado == "real" and r["classificacao"] == "incompleta" and "ambíguo" in r["motivo"]:
             return                                   # registro ambíguo: não há resposta certa conhecida
         ok = r["classificacao"] == esperado and (esperado != "real" or r["id_canonico"] in ids)
-        est[situacao(cs[0], r)][ok] += 1
+        est[situacao(cs[0], r, texto[cs[0].inicio:cs[0].fim])][ok] += 1
 
     for f in [f for f in ix.fichas if f.natureza == "acordao" and f.numero and f.classe]:
         ids = {x.id for x in ix.fichas if x.assinatura == f.assinatura}

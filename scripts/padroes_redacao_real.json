@@ -1,0 +1,7569 @@
+{
+ "_fonte": "Padrões de redação extraídos de ementas e íntegras públicas do STJ (Portal de Dados Abertos, espelhos de acórdãos e íntegras de decisões, jul.-set. 2026). Números de processo, UFs, datas, nomes de ministros e outras citações foram trocados por marcadores; nenhum trecho de texto é guardado.",
+ "classes_oficiais_stj": {
+  "APn": "AÇÃO PENAL",
+  "AREsp": "AGRAVO EM RECURSO ESPECIAL",
+  "AgInt na AR": "AGRAVO INTERNO NA AÇÃO RESCISÓRIA",
+  "AgInt na CR": "AGRAVO INTERNO NA CARTA ROGATÓRIA",
+  "AgInt na HDE": "AGRAVO INTERNO NA HOMOLOGAÇÃO DE DECISÃO ESTRANGEIRA",
+  "AgInt na Pet": "AGRAVO INTERNO NA PETIÇÃO",
+  "AgInt na Rcl": "AGRAVO INTERNO NA RECLAMAÇÃO",
+  "AgInt na SLS": "AGRAVO INTERNO NA SUSPENSÃO DE LIMINAR E DE SENTENÇA",
+  "AgInt na TutAntAnt": "AGRAVO INTERNO NA TUTELA ANTECIPADA ANTECEDENTE",
+  "AgInt na TutCautAnt": "AGRAVO INTERNO NA TUTELA CAUTELAR ANTECEDENTE",
+  "AgInt na TutPrv na HDE": "AGRAVO INTERNO NA TUTELA PROVISÓRIA NA HOMOLOGAÇÃO DE DECISÃO \n ESTRANGEIRA",
+  "AgInt no AREsp": "AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt no Acordo no AgInt no AREsp": "AGRAVO INTERNO NO PETIÇÃO DE ACORDO NO AGRAVO INTERNO NO AGRAVO EM \n RECURSO ESPECIAL",
+  "AgInt no AgInt no AREsp": "AGRAVO INTERNO NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt no AgInt no REsp": "AGRAVO INTERNO NO AGRAVO INTERNO NO RECURSO ESPECIAL",
+  "AgInt no AgInt nos EDcl no AREsp": "AGRAVO INTERNO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt no AgInt nos EDcl no REsp": "AGRAVO INTERNO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO \n RECURSO ESPECIAL",
+  "AgInt no HC": "AGRAVO INTERNO NO HABEAS CORPUS",
+  "AgInt no MS": "AGRAVO INTERNO NO MANDADO DE SEGURANÇA",
+  "AgInt no RE no AgInt no AREsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt no RE no AgInt no REsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NO AGRAVO INTERNO NO \n RECURSO ESPECIAL",
+  "AgInt no RE no AgInt nos EAREsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NO AGRAVO INTERNO NOS \n EMBARGOS DE DIVERGÊNCIA EM AGRAVO EM RECURSO ESPECIAL",
+  "AgInt no RE no AgInt nos EDcl no REsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NO AGRAVO INTERNO NOS \n EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "AgInt no RE no REsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NO RECURSO ESPECIAL",
+  "AgInt no RE nos EDcl no AREsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt no RE nos EDcl no AgInt no AREsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt no RE nos EDcl no AgInt no RMS": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NO AGRAVO INTERNO NO RECURSO EM MANDADO DE SEGURANÇA",
+  "AgInt no RE nos EDcl no AgInt nos EDcl no AgInt no REsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO RECURSO ESPECIAL",
+  "AgInt no RE nos EDcl no AgInt nos EDcl no AgInt nos EDcl no AgInt no AREsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS \n EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO EM RECURSO \n ESPECIAL",
+  "AgInt no RE nos EDcl no AgInt nos EDcl no RMS": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO EM MANDADO \n DE SEGURANÇA",
+  "AgInt no RE nos EDcl no AgRg no RMS": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NO AGRAVO REGIMENTAL NO RECURSO EM MANDADO DE SEGURANÇA",
+  "AgInt no RE nos EDcl no CC": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NO CONFLITO DE COMPETÊNCIA",
+  "AgInt no RE nos EDcl nos EDcl no AgInt no AREsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO EM RECURSO \n ESPECIAL",
+  "AgInt no RE nos EDcl nos EDcl no AgInt no REsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO RECURSO ESPECIAL",
+  "AgInt no RE nos EDcl nos EDcl nos EDcl no AgInt nos EDcl no AREsp": "AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO \n NOS EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO \n INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt no REsp": "AGRAVO INTERNO NO RECURSO ESPECIAL",
+  "AgInt no RMS": "AGRAVO INTERNO NO RECURSO EM MANDADO DE SEGURANÇA",
+  "AgInt nos EAREsp": "AGRAVO INTERNO NOS EMBARGOS DE DIVERGÊNCIA EM AGRAVO EM RECURSO \n ESPECIAL",
+  "AgInt nos EDcl na CR": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NA CARTA ROGATÓRIA",
+  "AgInt nos EDcl na DESIS nos EDcl no AgInt no AREsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NA DESISTÊNCIA NOS \n EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO EM RECURSO \n ESPECIAL",
+  "AgInt nos EDcl na TutAntAnt": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NA TUTELA ANTECIPADA ANTECEDENTE",
+  "AgInt nos EDcl no AREsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt nos EDcl no AgInt no AREsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt nos EDcl no AgInt no REsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO RECURSO ESPECIAL",
+  "AgInt nos EDcl no AgInt nos EDcl no AREsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt nos EDcl no RE no AgInt no RMS": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO EXTRAORDINÁRIO NO AGRAVO INTERNO NO RECURSO ORDINÁRIO EM MS",
+  "AgInt nos EDcl no RE nos EDcl no REsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO EXTRAORDINÁRIO \n NOS EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "AgInt nos EDcl no REsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "AgInt nos EDcl no RMS": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO EM MANDADO DE SEGURANÇA",
+  "AgInt nos EDcl nos EAREsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE \n DIVERGÊNCIA EM AGRAVO EM RECURSO ESPECIAL",
+  "AgInt nos EDcl nos EDcl no AREsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgInt nos EDcl nos EDcl no REsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "AgInt nos EDcl nos EREsp": "AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE \n DIVERGÊNCIA EM RECURSO ESPECIAL",
+  "AgInt nos EREsp": "AGRAVO INTERNO NOS EMBARGOS DE DIVERGÊNCIA EM RECURSO ESPECIAL",
+  "AgRg na APn": "AGRAVO REGIMENTAL NA AÇÃO PENAL",
+  "AgRg na CR": "AGRAVO REGIMENTAL NA CARTA ROGATÓRIA",
+  "AgRg na HDE": "AGRAVO REGIMENTAL NA HOMOLOGAÇÃO DE DECISÃO ESTRANGEIRA",
+  "AgRg na PET na APn": "AGRAVO REGIMENTAL NA PETIÇÃO NA AÇÃO PENAL",
+  "AgRg na PET no Inq": "AGRAVO REGIMENTAL NA PETIÇÃO NO INQUÉRITO",
+  "AgRg na Pet": "AGRAVO REGIMENTAL NA PETIÇÃO",
+  "AgRg no ARE no RE nos EDcl no AgRg no AREsp": "AGRAVO REGIMENTAL NO AGRAVO EM RECURSO EXTRAORDINÁRIO NO RECURSO \n EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO \n AGRAVO EM RECURSO ESPECIAL",
+  "AgRg no AREsp": "AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL",
+  "AgRg no AgRg no HC": "AGRAVO REGIMENTAL NO AGRAVO REGIMENTAL NO HABEAS CORPUS\r\n ",
+  "AgRg no AgRg no RHC": "AGRAVO REGIMENTAL NO AGRAVO REGIMENTAL NO RECURSO DE HABEAS CORPUS",
+  "AgRg no HC": "AGRAVO REGIMENTAL NO HABEAS CORPUS",
+  "AgRg no Inq": "AGRAVO REGIMENTAL NO INQUÉRITO",
+  "AgRg no RCD no HC": "AGRAVO REGIMENTAL NO PEDIDO DE RECONSIDERAÇÃO NO HABEAS CORPUS",
+  "AgRg no RE no AgRg no AREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL",
+  "AgRg no RE no AgRg no AgRg nos EDcl no AREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NO \n AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO \n ESPECIAL",
+  "AgRg no RE no AgRg no HC": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NO \n HABEAS CORPUS",
+  "AgRg no RE no AgRg no REsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NO RECURSO ESPECIAL",
+  "AgRg no RE no AgRg no RHC": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NO \n RECURSO EM HABEAS CORPUS",
+  "AgRg no RE no AgRg nos EAREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NOS\n EMBARGOS DE DIVERGÊNCIA EM AGRAVO EM RECURSO ESPECIAL",
+  "AgRg no RE no AgRg nos EDcl no AREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgRg no RE no AgRg nos EREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NOS\n EMBARGOS DE DIVERGÊNCIA EM RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgInt nos EAREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DIVERGÊNCIA EM AGRAVO \n EM RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgRg no AREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgRg no AgRg no AREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgRg no REsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgRg no RHC": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO DE HABEAS CORPUS",
+  "AgRg no RE nos EDcl no AgRg nos EAREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE DIVERGÊNCIA EM \n AGRAVO EM RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgRg nos EDcl na PET no REsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NA \n PETIÇÃO NO RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgRg nos EDcl no AREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO\n EM RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgRg nos EDcl no REsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO \n RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no AgRg nos EREsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE DIVERGÊNCIA EM \n RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no REsp": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO RECURSO ESPECIAL",
+  "AgRg no RE nos EDcl no RHC": "AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE \n DECLARAÇÃO NO RECURSO ORDINÁRIO EM HABEAS CORPUS",
+  "AgRg no REsp": "AGRAVO REGIMENTAL NO RECURSO ESPECIAL",
+  "AgRg no RHC": "AGRAVO REGIMENTAL NO RECURSO ORDINÁRIO EM HABEAS CORPUS",
+  "AgRg nos EAREsp": "AGRAVO REGIMENTAL NOS EMBARGOS DE DIVERGÊNCIA EM AGRAVO EM RECURSO \n ESPECIAL",
+  "AgRg nos EDcl na APn": "AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NA AÇÃO PENAL",
+  "AgRg nos EDcl na PET na APn": "AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NA PETIÇÃO NA AÇÃO PENAL",
+  "AgRg nos EDcl no AREsp": "AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "AgRg nos EDcl no AgRg na APn": "AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NA AÇÃO PENAL",
+  "AgRg nos EDcl no HC": "AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO HABEAS CORPUS",
+  "AgRg nos EDcl no REsp": "AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "AgRg nos EDcl no RHC": "AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO RECURSO DE HABEAS CORPUS",
+  "CauInomCrim": "CAUTELAR INOMINADA CRIMINAL",
+  "EAREsp": "EMBARGOS DE DIVERGÊNCIA EM AGRAVO EM RECURSO ESPECIAL",
+  "EDcl na APn": "EMBARGOS DE DECLARAÇÃO NA AÇÃO PENAL",
+  "EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt na CR": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NA CARTA ROGATÓRIA",
+  "EDcl no AgInt na SLS": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NA SUSPENSÃO DE LIMINAR E \n DE SENTENÇA",
+  "EDcl no AgInt na SS": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NA SUSPENSÃO DE SEGURANÇA",
+  "EDcl no AgInt na TutCautAnt": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NA TUTELA CAUTELAR ANTECEDENTE",
+  "EDcl no AgInt na TutPrv no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NA TUTELA PROVISÓRIA NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt no AgInt no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt no AgInt no PDist no REsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO INTERNO NO PEDIDO DE DISTINÇÃO NO RECURSO ESPECIAL",
+  "EDcl no AgInt no AgInt no REsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO INTERNO NO RECURSO ESPECIAL",
+  "EDcl no AgInt no AgInt no RMS": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO INTERNO NO \n RECURSO EM MANDADO DE SEGURANÇA",
+  "EDcl no AgInt no AgInt nos EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt no RE nos EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO \n NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt no RE nos EDcl no AgInt no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO \n NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO EM RECURSO \n ESPECIAL",
+  "EDcl no AgInt no RE nos EDcl no AgInt no AgInt no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO RECURSO EXTRAORDINÁRIO \n NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO INTERNO NO \n AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt no REsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO RECURSO ESPECIAL",
+  "EDcl no AgInt no RMS": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO RECURSO EM MANDADO DE SEGURANÇA",
+  "EDcl no AgInt nos EAREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DIVERGÊNCIA\n EM AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt nos EDcl na CR": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO \n NA CARTA ROGATÓRIA",
+  "EDcl no AgInt nos EDcl na Pet": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO \n NA PETIÇÃO",
+  "EDcl no AgInt nos EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt nos EDcl no AgInt no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt nos EDcl no AgInt nos EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgInt nos EDcl no REsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "EDcl no AgRg na QC": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NA QUEIXA-CRIME",
+  "EDcl no AgRg no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgRg no AgRg no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgRg no AgRg no HC": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO AGRAVO REGIMENTAL NO HABEAS CORPUS",
+  "EDcl no AgRg no HC": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO HABEAS CORPUS",
+  "EDcl no AgRg no RE no AgRg no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO \n EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgRg no RE no AgRg nos EAREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO \n EXTRAORDINÁRIO NO AGRAVO REGIMENTAL NOS EMBARGOS DE DIVERGÊNCIA EM \n AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgRg no RE nos EDcl no AgRg no AREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO \n EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO \n AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgRg no RE nos EDcl no AgRg no REsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO ESPECIAL",
+  "EDcl no AgRg no RE nos EDcl no AgRg nos EAREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO \n EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NOS \n EMBARGOS DE DIVERGÊNCIA EM AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgRg no REsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO ESPECIAL",
+  "EDcl no AgRg no RHC": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO RECURSO DE HABEAS CORPUS",
+  "EDcl no AgRg nos EAREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE \n DIVERGÊNCIA EM AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no AgRg nos EDcl no HC": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE DECLARAÇÃO NO HABEAS CORPUS",
+  "EDcl no AgRg nos EDcl nos EAREsp": "EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE \n DECLARAÇÃO NOS EMBARGOS DE DIVERGÊNCIA EM AGRAVO EM RECURSO ESPECIAL",
+  "EDcl no HC": "EMBARGOS DE DECLARAÇÃO NO HABEAS CORPUS",
+  "EDcl no RE no AgInt no RMS": "EMBARGOS DE DECLARAÇÃO NO RECURSO EXTRAORDINÁRIO NO AGRAVO INTERNO NO RECURSO ORDINÁRIO EM MS",
+  "EDcl no REsp": "EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "EDcl no RMS": "EMBARGOS DE DECLARAÇÃO NO RECURSO EM MANDADO DE SEGURANÇA",
+  "EDcl nos EDcl na APn": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NA AÇÃO PENAL",
+  "EDcl nos EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl nos EDcl no AgInt na SLS": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO \n NA SUSPENSÃO DE LIMINAR E DE SENTENÇA",
+  "EDcl nos EDcl no AgInt no AREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO \n NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl nos EDcl no AgInt no AgInt no AREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO \n NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl nos EDcl no AgInt no RE nos EDcl no AgInt nos EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO \n NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO \n INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl nos EDcl no AgInt no REsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO \n NO RECURSO ESPECIAL",
+  "EDcl nos EDcl no AgInt nos EAREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO \n NOS EMBARGOS DE DIVERGÊNCIA EM AGRAVO EM RECURSO ESPECIAL",
+  "EDcl nos EDcl no AgInt nos EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl nos EDcl no AgInt nos EDcl no REsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "EDcl nos EDcl no AgRg no RE nos EDcl nos EDcl no AgRg nos EDcl no AREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO \n REGIMENTAL NO RECURSO EXTRAORDINÁRIO NOS EMBARGOS DE DECLARAÇÃO NOS \n EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NOS EMBARGOS DE \n DECLARAÇÃO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl nos EDcl no REsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO ESPECIAL",
+  "EDcl nos EDcl no RHC": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO RECURSO EM HABEAS CORPUS",
+  "EDcl nos EDcl nos EDcl no AgInt no AREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO INTERNO NO AGRAVO EM RECURSO ESPECIAL",
+  "EDcl nos EDcl nos EDcl no AgRg no AREsp": "EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NOS EMBARGOS DE DECLARAÇÃO NO AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL",
+  "EREsp": "EMBARGOS DE DIVERGÊNCIA EM RECURSO ESPECIAL",
+  "HC": "HABEAS CORPUS",
+  "Inq": "INQUÉRITO",
+  "MS": "MANDADO DE SEGURANÇA",
+  "PDist no REsp": "PEDIDO DE DISTINÇÃO NO RECURSO ESPECIAL",
+  "PET no REsp": "PETIÇÃO NO RECURSO ESPECIAL",
+  "RCD na TutCautAnt": "PEDIDO DE RECONSIDERAÇÃO NA TUTELA CAUTELAR ANTECEDENTE",
+  "RCD no HC": "PEDIDO DE RECONSIDERAÇÃO NO HABEAS CORPUS",
+  "REsp": "RECURSO ESPECIAL",
+  "RHC": "RECURSO ORDINARIO EM HABEAS CORPUS",
+  "RMS": "RECURSO ORDINÁRIO EM MANDADO DE SEGURANÇA"
+ },
+ "nomes_publicos_das_leis": {
+  "13105": [
+   "CPC/2015",
+   "CPC/15",
+   "CPC",
+   "NCPC",
+   "Código de Processo Civil de 2015",
+   "Código de Processo Civil",
+   "Lei n. 13.105/2015",
+   "Lei nº 13.105/2015"
+  ],
+  "10406": [
+   "CC/2002",
+   "CC",
+   "Código Civil de 2002",
+   "Código Civil",
+   "Lei n. 10.406/2002"
+  ],
+  "5452": [
+   "CLT",
+   "Consolidação das Leis do Trabalho"
+  ],
+  "CF": [
+   "CF/88",
+   "CF/1988",
+   "CF",
+   "CRFB/88",
+   "CRFB",
+   "Constituição Federal de 1988",
+   "Constituição Federal",
+   "Constituição da República",
+   "Carta Magna"
+  ],
+  "3689": [
+   "CPP",
+   "Código de Processo Penal"
+  ],
+  "1001": [
+   "CPM",
+   "Código Penal Militar"
+  ],
+  "8078": [
+   "CDC",
+   "Código de Defesa do Consumidor",
+   "Lei n. 8.078/1990"
+  ],
+  "4737": [
+   "Código Eleitoral"
+  ],
+  "64": [
+   "LC n. 64/1990",
+   "LC 64/90",
+   "Lei Complementar n. 64/1990"
+  ]
+ },
+ "acordao": [
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "EAREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "",
+   ", Ministro {R}, DJe de {D}.{D}.{D}"
+  ],
+  [
+   "",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "(",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "",
+   ", Primeira Turma, Rel"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJe de {D}.{D}.{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Primeira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "",
+   ", Segunda Turma, Rel"
+  ],
+  [
+   "",
+   "RCD no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJEN de {D}.{D}.{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Sexta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta"
+  ],
+  [
+   "",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "EREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Terceira Seção, Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt nos EDcl nos EREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Seção, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "",
+   ", Segunda Turma, Rel"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, Rel"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, Rel"
+  ],
+  [
+   "",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "",
+   ", Terceira Seção, Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STF, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Primeira Turma, Relatora {R}, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Segunda Turma, Relator {R}, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", de relatoria do Ministro {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Min"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Terceira Seção, Relator {R}, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "",
+   "AgInt nos EDcl no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Ministro {R}, Quinta Turma, DJe {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "EAREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "CC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Seção, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgRg nos EDcl no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quarta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Segunda Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg nos EDcl no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Min"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STF, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Primeira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "EDcl no AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Primeira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", de relatoria do Ministro {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifou-se"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   ": ",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "HC",
+   " ",
+   "pontos",
+   "",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgInt no REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifou-se"
+  ],
+  [
+   "",
+   "AgRg nos EDcl no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "EDcl no AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifei."
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Min"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " ",
+   "cru",
+   "",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt nos EDcl no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt nos EDcl no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "(",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifou-se"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   ": ",
+   "RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "STJ, ",
+   "AgInt nos EAREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt nos EDcl nos EAREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Julgamento: {D}/{D}/{D}, Segunda Seção, DJe de {D}º/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DEJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "EDcl no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, Rel"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "EREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   ": ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Terceira Seção, Rel"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "",
+   ", Rel"
+  ],
+  [
+   "",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", foi formulada idêntica pretensão em favor do Agravante, tendo sido parcialmente conhecid"
+  ],
+  [
+   "(",
+   "AgRg nos EDcl no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "EAREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Corte Especial,"
+  ],
+  [
+   "(",
+   "EREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Corte"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator"
+  ],
+  [
+   "STJ, ",
+   "AgRg no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, DJe"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "EDcl no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}"
+  ],
+  [
+   "",
+   "EREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", pacificou o entendimento de que,"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Seção, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt na AR",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relatora {R}, Segunda Seção, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Terceira Seção, j"
+  ],
+  [
+   "STF, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Primeira Turma, j"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgInt nos EDcl no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", {D}ª Turma, DJe de {D}/{D}/{D},"
+  ],
+  [
+   "STJ, ",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "CC",
+   " n. ",
+   "pontos",
+   "",
+   ", Ministro {R}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "CC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Segunda Seção, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "(",
+   "EDcl no AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt nos EDcl no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "CC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Seção, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgInt nos EDcl no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " nº ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "RCD no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg nos EDcl no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "cru",
+   "",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "STF, ",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relatora {R}, Primeira Turma, julg"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Terceira Seção, Rel"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Seção, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STF, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "",
+   ", Rel"
+  ],
+  [
+   "STF, ",
+   "HC",
+   " ",
+   "pontos",
+   "",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R} - Desembargador Convocado do TJDFT, Sexta Turma, julgado em {D}/{D}/{D}, DJe"
+  ],
+  [
+   ": ",
+   "EREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, Rel"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "",
+   ", Relatora {R}, Primeira Turma, julgado em {D}/{D}/{D}, publicado em {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Relatora {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "EDcl no AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "CC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Segunda Seção, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R},"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n.\n ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Primeira"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Segunda"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n.\n ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, DJe {D}.{D}.{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, DJe"
+  ],
+  [
+   "STF, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "",
+   ", j"
+  ],
+  [
+   "STJ, ",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, DJe {D}.{D}.{D}"
+  ],
+  [
+   "(",
+   "AgInt nos EDcl no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, destaquei."
+  ],
+  [
+   "",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   ": ",
+   "AgRg no REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Ministra {R}, Sexta Turma, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", REsp n"
+  ],
+  [
+   "(",
+   "AgInt nos EDcl no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AR",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Seção, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, julgado em {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Seção, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "RCD no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "EAREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "",
+   "EAREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Segunda Seção, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Segunda Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt nos EDcl no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "SLS",
+   "  n.  ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Corte Especial, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifei."
+  ],
+  [
+   "",
+   "AgInt nos EDcl nos EREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "CC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Primeira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "EAREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt nos EAREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgInt nos EAREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt nos EDcl nos EREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgRg nos EAREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt nos EREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, {D}ª T., DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, DJe {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg nos EDcl no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, DJe {D}.{D}.{D}"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifou-se"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "HC",
+   " n.º ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, Rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Min"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", sendo inadmissível a reiteração de pedido"
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "",
+   ", Relª"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " ",
+   "cru",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Ministro {R}, Quinta Turma, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifei"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "EDcl no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Seção, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D} - grifamos."
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Desembargador Convocado do TJDFT, Sexta Turma, julgado em {D}/{D}/{D}, DJe "
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relatora {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "HC",
+   " nº ",
+   "pontos",
+   "/{UF}",
+   ", rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "STJ, ",
+   "RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   ": ",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STF, ",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relatora {R}, Primeira Turma, julgado em {D}/{D}/{D}, publicado em {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "RCD no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel.ª Min.ª Daniela Teixeira, Quinta Turma, julgado em {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "RCD no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STF, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Plenário"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}"
+  ],
+  [
+   ": ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Ministro {R}, Quinta Turma, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "RHC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}"
+  ],
+  [
+   "",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", rel"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta"
+  ],
+  [
+   "STJ, ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Terceira Seção,"
+  ],
+  [
+   "STJ, ",
+   "RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   "\n ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ","
+  ],
+  [
+   "(",
+   "EAREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", rel"
+  ],
+  [
+   "(",
+   "AgInt no RMS",
+   " n.\n ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJe de"
+  ],
+  [
+   ": ",
+   "AgRg no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   ": ",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "",
+   "REsp",
+   " n.º ",
+   "pontos",
+   "/{UF}",
+   ", consolidou entendimento de que não há relação de acessoriedade entre contratos de compra"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Terceira Seção, Rel"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, destaquei."
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, destaquei."
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STF, ",
+   "RHC",
+   " ",
+   "pontos",
+   "",
+   ", Rel"
+  ],
+  [
+   "",
+   "EREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " nº ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, D Je de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "EAREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "EDcl no AREsp",
+   " n. ",
+   "pontos",
+   "",
+   ", Ministro {R}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D} DJe de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "STF, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "RCD no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", de minha relatoria, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", rel"
+  ],
+  [
+   "",
+   "REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ","
+  ],
+  [
+   "(",
+   "AgInt nos EDcl no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgInt no AgInt no AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "EDcl no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "HC",
+   " nº ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   ":\n",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", a que se negou provimento, in limine, e no HC n"
+  ],
+  [
+   "",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", destaquei"
+  ],
+  [
+   "(",
+   "AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", de minha relatoria, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "EDcl nos EDcl no AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", a parte foi intimada para comprovar, por documento idôneo, eventual suspensão, interrupç"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgInt na SLS",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Corte Especial, DJe de {D}.{D}.{D}."
+  ],
+  [
+   ": ",
+   "AgInt no REsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quarta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Terceira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, julgado em {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "cru",
+   "/{UF}",
+   ", Sexta Turma, Relª"
+  ],
+  [
+   "(",
+   "RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "(",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, relator para acórdão Ministro {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJE"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}, grifo nosso."
+  ],
+  [
+   "",
+   "CC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Seção, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "EAREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator p/ Acórdão Ministro {R}, CORTE ESPECIAL, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", de minha relatoria, Quarta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Seção, julgado em {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "EREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, CORTE ESPECIAL, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "Rcl",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Terceira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quarta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Segunda Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, relator para acórdão Ministro {R}, Primeira Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Segunda Turma, DJe de {D}.{D}.{D}"
+  ],
+  [
+   "",
+   "AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJe de {D}/{D}/{D}.Ademais,"
+  ],
+  [
+   "(",
+   "EDcl no AgRg no AREsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "SLS",
+   "  n.  ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "SLS",
+   "  n.  ",
+   "pontos",
+   "",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Segunda Turma, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, relatora para acórdão Ministra {R}, Primeira Turma, julgado em {D}/{D}/{D},"
+  ],
+  [
+   "(",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}"
+  ],
+  [
+   "(",
+   "REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, sem destaque n"
+  ],
+  [
+   "(",
+   "AgInt no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STF, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Min"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", de minha relatoria, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifei."
+  ],
+  [
+   "",
+   "EREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ""
+  ],
+  [
+   "",
+   "EDcl nos EDcl nos EDcl no AgRg no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "AgInt no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", "
+  ],
+  [
+   "(",
+   "AgInt no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quarta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Terceira Seção, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, relator para acórdão Ministro {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "EDcl no AREsp",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, {D}ª T., DJe de {D}/{D}/{D}, destaquei"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, destaquei"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifou-se."
+  ],
+  [
+   "(",
+   "AgRg nos EDcl no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "STJ, ",
+   "AgRg no REsp",
+   " ",
+   "cru",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg nos EDcl no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}."
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", da minha relatoria, Terceira Seção, julgado em {D}/{D}/{D} - e o Supremo Tribunal Federa"
+  ],
+  [
+   "(",
+   "RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Primeira Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifei"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}."
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, DJe de {D}/{D}/{D} {D}"
+  ],
+  [
+   "(",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, relator para acórdão Ministro {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJE"
+  ],
+  [
+   "STJ, ",
+   "EDcl no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, j"
+  ],
+  [
+   "(",
+   "AgRg no AREsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, REL"
+  ],
+  [
+   "STJ, ",
+   "EDcl no AgRg nos EDcl no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, j"
+  ],
+  [
+   "(",
+   "EDcl no AgRg nos EDcl no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", Relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJe de {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Quinta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "STJ, ",
+   "AgRg nos EDcl no RHC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Sexta Turma, julgado em {D}/{D}/{D}, DJe {D}/{D}/{D}"
+  ],
+  [
+   "",
+   "HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", foi formulada idêntica pretensão em favor do ora Recorrente"
+  ],
+  [
+   "",
+   "RHC",
+   " nº ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   ": ",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "STJ, ",
+   "EDcl no AgRg nos EDcl no HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", Rel"
+  ],
+  [
+   "(",
+   "AgRg no HC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Quinta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}, grifou-se"
+  ],
+  [
+   "STJ, ",
+   "AgRg no REsp",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relator {R}, Sexta Turma, julgado em {D}/{D}/{D}, DJEN de {D}/{D}/{D}"
+  ],
+  [
+   "STF, ",
+   "HC",
+   " ",
+   "pontos",
+   "",
+   ""
+  ],
+  [
+   "",
+   "HC",
+   " ",
+   "pontos",
+   "/{UF}",
+   ", reputa inválido o reconhecimento sem a observância do art"
+  ],
+  [
+   "STJ, ",
+   "AgRg no RHC",
+   " n. ",
+   "pontos",
+   "/{UF}",
+   ", relatora {R}, Quinta Turma, DJEN de {D}/{D}/{D}"
+  ]
+ ],
+ "artigo": [
+  [
+   "art.",
+   " do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   " do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   " do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   " do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", III, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 2º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", III, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   " do ",
+   "CPC/2015"
+  ],
+  [
+   "artigo",
+   " do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   " do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   " do ",
+   "CC"
+  ],
+  [
+   "art.",
+   ", § 11, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", § 4º, do ",
+   "Código de Processo Civil de 2015"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 2º, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 11, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", III, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 4º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CPC/2015"
+  ],
+  [
+   "ART.",
+   ", § 4º, I, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", IX, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", § 4º, I, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", caput, do ",
+   "CPC/2015"
+  ],
+  [
+   "artigo",
+   " do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", § 4º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   " da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", § 2º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "artigo",
+   " do ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", III, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", II, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", I, do ",
+   "CPP"
+  ],
+  [
+   "arts.",
+   ", § 1º, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", § 2º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 2º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   " do ",
+   "CDC"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CC"
+  ],
+  [
+   "ART.",
+   ", § 4º, DO ",
+   "CPC/2015"
+  ],
+  [
+   "ART.",
+   ", § 1º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 2º, ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 3º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", III, do ",
+   "CPP"
+  ],
+  [
+   "ART.",
+   ", § 4º, DO ",
+   "CÓDIGO DE PROCESSO CIVIL DE 2015"
+  ],
+  [
+   "art.",
+   ", § 4º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "artigo",
+   " do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", III, \"a\", da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", § 5º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", parágrafo único, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", inciso III, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", III, da ",
+   "CF"
+  ],
+  [
+   "art.",
+   ", IV, do ",
+   "CPC"
+  ],
+  [
+   "arts.",
+   ", III, do ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", inciso I, alínea e, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   " do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", II, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", IX, da ",
+   "CF"
+  ],
+  [
+   "art.",
+   ", I, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 5º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", § 3º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ART.",
+   ", II, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", parágrafo único, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", I, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", § 6º, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 6º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 8º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 6º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", V, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", I, \"e\", da ",
+   "Constituição Federal"
+  ],
+  [
+   "ART.",
+   ", III, DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   ", II, \"a\", da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", inciso III, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", III, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   "º, LXXVIII, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", § 4º, do ",
+   "CPC/2015"
+  ],
+  [
+   "ART.",
+   ", § 4º, DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   " do ",
+   "CPC/15"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CÓDIGO CIVIL"
+  ],
+  [
+   "art.",
+   "º do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   " do ",
+   "Código de Processo Civil de 2015"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CÓDIGO DE PROCESSO PENAL"
+  ],
+  [
+   "artigo",
+   ", inciso I, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   " da ",
+   "CF"
+  ],
+  [
+   "art.",
+   ", § 3º, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", V, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 1º, IV, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", § 1º, DO ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", III, do ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", § 2º, do ",
+   "CPC/2015"
+  ],
+  [
+   "Art.",
+   " do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 3º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", inciso III, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   " do ",
+   "Código de Defesa do Consumidor"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", § 11, do ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", inciso III, alínea \"a\", da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   "º, XI, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   "º, LXXVIII, da ",
+   "CF"
+  ],
+  [
+   "art.",
+   ", III, da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   ", II, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", §2º, do ",
+   "CPC"
+  ],
+  [
+   "arts.",
+   ", § 1º, do ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", inciso I, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "arts.",
+   " do ",
+   "CC"
+  ],
+  [
+   "arts.",
+   " do ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "ART.",
+   ", § 6º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   "º do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", III, \"a\" da ",
+   "CF/88"
+  ],
+  [
+   "ART.",
+   ", III, DO ",
+   "NCPC"
+  ],
+  [
+   "art.",
+   ", III, do ",
+   "NCPC"
+  ],
+  [
+   "art.",
+   ", II, do ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", I, \"c\", da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", III, \"d\", do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", §1º, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", §4º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", VI, do ",
+   "CPP"
+  ],
+  [
+   "ARTIGO",
+   " DO ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", § 3º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", parágrafo único, do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", § 3º, II, do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", § 3º, III, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", parágrafo único, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "artigo",
+   "º do ",
+   "CDC"
+  ],
+  [
+   "ARTIGO",
+   ", § 1º, ",
+   "CPC/2015"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   ", inciso IX, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   " do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", § 5º, I, do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", IX, da ",
+   "Constituição da República"
+  ],
+  [
+   "arts.",
+   ", § 4º, do ",
+   "CPC"
+  ],
+  [
+   "arts.",
+   ", § 1º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CC/2002"
+  ],
+  [
+   "art.",
+   ", inciso II, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", ",
+   "CPC"
+  ],
+  [
+   "art.",
+   "º, inciso LIII, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   ", III, alínea \"a\", da ",
+   "CF/88"
+  ],
+  [
+   "art.",
+   ", IV, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", parágrafo único, do ",
+   "CC"
+  ],
+  [
+   "art.",
+   ", § 10, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   " do ",
+   "CC/2002"
+  ],
+  [
+   "art.",
+   ", III, da ",
+   "CF/1988"
+  ],
+  [
+   "art.",
+   ", inciso III, alínea a, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   " da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", II, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "artigo",
+   ", III, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", IV, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", § 2º, ",
+   "CPC"
+  ],
+  [
+   "art.",
+   "º, XL, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", I, \"b\", do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 4º, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", VII, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", inciso I, alínea e, da ",
+   "Constituição Federal"
+  ],
+  [
+   "ART.",
+   ", III, DO ",
+   "CPP"
+  ],
+  [
+   "arts.",
+   " do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", III, da ",
+   "Carta Magna"
+  ],
+  [
+   "ART.",
+   ", § 5º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "CC"
+  ],
+  [
+   "artigo",
+   ", inciso II, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "ARTIGO",
+   " DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   "º do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 6º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", inciso I, alínea e, da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   ", II, ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", VII, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", §11, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", inciso III, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "arts.",
+   " do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", IV, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", I, \"e\", do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", §3º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "ART.",
+   ", § 8º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", I, do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", inciso III, da ",
+   "CF"
+  ],
+  [
+   "art.",
+   ", § 2º, do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", III, alínea \"a\", da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", parágrafo único, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 7º, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", IV, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 6º, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   "º do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   "º, VIII, do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   "º, XXXV, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigos",
+   " do ",
+   "Código Civil"
+  ],
+  [
+   "artigo",
+   ", da ",
+   "Constituição da República"
+  ],
+  [
+   "artigos",
+   ", §1º, do ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", inciso III, do ",
+   "Código de Defesa do Consumidor"
+  ],
+  [
+   "artigo",
+   ", inciso III, ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", § 4º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", I, \"c\", da ",
+   "Constituição da República"
+  ],
+  [
+   "arts.",
+   " do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ART.",
+   ", § 11, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   " da ",
+   "Lei n. 13.105/2015"
+  ],
+  [
+   "arts.",
+   " do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", inciso VII, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", IX, da ",
+   "CF/1988"
+  ],
+  [
+   "art.",
+   ", inciso I, alínea c, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   "º, XI, da ",
+   "CF"
+  ],
+  [
+   "ARTIGO",
+   " DO ",
+   "CÓDIGO CIVIL"
+  ],
+  [
+   "art.",
+   ", § 1º do ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", inciso IX, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   ", § 1º, do ",
+   "CPC/2015"
+  ],
+  [
+   "arts.",
+   ", III, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ART.",
+   ", II, DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   ", inciso I, alínea \"e\", do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "artigo",
+   ", § 4º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", II, do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", § 2º, do ",
+   "CC"
+  ],
+  [
+   "art.",
+   "º do ",
+   "Código Civil"
+  ],
+  [
+   "artigo",
+   ", inciso VI, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ARTIGO",
+   " DO ",
+   "CPP"
+  ],
+  [
+   "ART.",
+   " DA ",
+   "CF"
+  ],
+  [
+   "art.",
+   ", VI, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 5º, do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   "º, VIII, do ",
+   "Código de Defesa do Consumidor"
+  ],
+  [
+   "artigo",
+   ", do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", §4º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", caput, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   "º, XI, da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   " do ",
+   "NCPC"
+  ],
+  [
+   "art.",
+   ", inciso I, alínea \"c\" da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   " do ",
+   "Código Penal Militar"
+  ],
+  [
+   "arts.",
+   " do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "NCPC"
+  ],
+  [
+   "art.",
+   ", V, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", III, ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", § 2º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", VIII, do ",
+   "CPP"
+  ],
+  [
+   "ART.",
+   ", II, DO ",
+   "CPP"
+  ],
+  [
+   "art.",
+   "º, inciso XI, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   ", inciso III, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", I, \"b\", do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", ",
+   "CC"
+  ],
+  [
+   "ART.",
+   ", IX, DA ",
+   "CF"
+  ],
+  [
+   "ART.",
+   ", II, DO ",
+   "CPC/2015"
+  ],
+  [
+   "ARTIGO",
+   " DO ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", I, \"e\", da ",
+   "Constituição da República"
+  ],
+  [
+   "ART.",
+   ", §1º, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   " do ",
+   "Código Civil de 2002"
+  ],
+  [
+   "art.",
+   ", III, \"a\", da ",
+   "CF/1988"
+  ],
+  [
+   "artigos",
+   ", § 1º, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", § 1º, DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   ", § 2º, I, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", § 1º, IV, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", I, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ART.",
+   ", § 2º, DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   ", inciso I, do ",
+   "Código Civil"
+  ],
+  [
+   "ART.",
+   ", § 11, DO ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", inciso I, do ",
+   "CPP"
+  ],
+  [
+   "arts.",
+   "º, XLVI, da ",
+   "Constituição Federal"
+  ],
+  [
+   "ART.",
+   ", II, DO ",
+   "CPC/15"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CPC/15"
+  ],
+  [
+   "art.",
+   ", V, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", do ",
+   "CPC/15"
+  ],
+  [
+   "artigo",
+   ", caput, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "artigo",
+   ", do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", X, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 11, do ",
+   "Código de Processo Civil de 2015"
+  ],
+  [
+   "art.",
+   ", § 7º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "Código de Defesa do Consumidor"
+  ],
+  [
+   "ART.",
+   "º, VIII, DO ",
+   "CDC"
+  ],
+  [
+   "artigo",
+   ", § 3º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", III, \"c\", da ",
+   "CF/1988"
+  ],
+  [
+   "art.",
+   ", § 8º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", § 3º, II, do ",
+   "Código de Defesa do Consumidor"
+  ],
+  [
+   "art.",
+   ", §2º, do ",
+   "CPP"
+  ],
+  [
+   "artigo",
+   ", parágrafo único, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   " do ",
+   "Código Penal Militar"
+  ],
+  [
+   "art.",
+   ", §2º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", §4º do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   "º, XL, da ",
+   "Constituição da República"
+  ],
+  [
+   "artigo",
+   ", § 2º, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", III, DO ",
+   "CPC/2015"
+  ],
+  [
+   "art",
+   ", § 4º, do ",
+   "Código de Processo Civil de 2015"
+  ],
+  [
+   "art.",
+   ", XII, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", XII, da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   ", § 3º, I, do ",
+   "CPP"
+  ],
+  [
+   "ART.",
+   ", PARAGRAFO ÚNICO DO ",
+   "CÓDIGO DE PROCESSO PENAL"
+  ],
+  [
+   "art.",
+   " da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   ", §6º, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", inciso II, do ",
+   "CPP"
+  ],
+  [
+   "arts.",
+   ", § 2º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "ART.",
+   ", I, DO ",
+   "CPP"
+  ],
+  [
+   "ARTIGO",
+   " DO ",
+   "CÓDIGO DE PROCESSO PENAL"
+  ],
+  [
+   "ART.",
+   ", V, DO ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", inciso V, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", inciso II, alínea a, da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   ", IV, \"a\", do ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", inciso IV do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   "º, LVII, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", V, \"a\", do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", XI, da ",
+   "CF"
+  ],
+  [
+   "arts.",
+   ", I, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", § 1º, DO ",
+   "CPP"
+  ],
+  [
+   "ART.",
+   ", § 11, DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   ", VIII, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", I, \"b\", do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "artigo",
+   ", § 1º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "arts.",
+   ", § 4º, do ",
+   "CPC/2015"
+  ],
+  [
+   "ART.",
+   ", PARÁGRAFO ÚNICO, DO ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", I, DO ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", III, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", IV, do ",
+   "CDC"
+  ],
+  [
+   "ART.",
+   ", PARÁGRAFO ÚNICO, DO ",
+   "CC"
+  ],
+  [
+   "art.",
+   ", § 3º, do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", VIII, do ",
+   "CDC"
+  ],
+  [
+   "artigo",
+   ", § 2º, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", § 3º, IV, do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", caput, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", II, ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", § 4º, ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 1º, IV, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", III, 'a', da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", V, ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 3º, do ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", inciso III, da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   "º, inciso III, do ",
+   "Código Civil"
+  ],
+  [
+   "ART.",
+   ", I, ",
+   "CPP"
+  ],
+  [
+   "artigo",
+   ", inciso II, do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", VI, do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", §2º, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "artigo",
+   ", IX, da ",
+   "Constituição Federal"
+  ],
+  [
+   "Artigo",
+   ", §5º, inciso I, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", II do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 1º, do ",
+   "Código de Processo Civil de 2015"
+  ],
+  [
+   "art.",
+   ", § 11, do ",
+   "NCPC"
+  ],
+  [
+   "Art.",
+   " do ",
+   "CC"
+  ],
+  [
+   "art.",
+   ", III, do ",
+   "Código de Processo Civil de 2015"
+  ],
+  [
+   "ART.",
+   ", §11, DO ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", §8º, do ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", do ",
+   "Código de Defesa do Consumidor"
+  ],
+  [
+   "artigo",
+   ", do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", § 3º, II, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "ART.",
+   ", § 4º, I, DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "art.",
+   ", caput, do ",
+   "Código Civil de 2002"
+  ],
+  [
+   "art.",
+   ", III, \"c\" da ",
+   "Constituição Federal"
+  ],
+  [
+   "Art.",
+   " do ",
+   "Código Civil"
+  ],
+  [
+   "art.",
+   ", § 1º, IV, do ",
+   "CPC/2015"
+  ],
+  [
+   "art.",
+   ", §1º do ",
+   "CPC"
+  ],
+  [
+   "artigo",
+   ", IX, da ",
+   "CF/88"
+  ],
+  [
+   "art.",
+   "º do ",
+   "CDC"
+  ],
+  [
+   "art.",
+   ", § 5º do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   " da ",
+   "CRFB/88"
+  ],
+  [
+   "artigo",
+   ", parágrafo único do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", I, ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", §7º, do ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   ", ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 11, ",
+   "CPC"
+  ],
+  [
+   "ART.",
+   " DA ",
+   "CONSTITUIÇÃO FEDERAL"
+  ],
+  [
+   "ART.",
+   ", I, ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", §3º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", parágrafo único, do ",
+   "CDC"
+  ],
+  [
+   "arts.",
+   "º, VIII, do ",
+   "CDC"
+  ],
+  [
+   "ARTIGO",
+   ", § 1º, DO ",
+   "CÓDIGO DE PROCESSO CIVIL"
+  ],
+  [
+   "ART.",
+   " DO ",
+   "CÓDIGO DE PROCESSO CIVIL DE 2015"
+  ],
+  [
+   "art.",
+   ", §5º, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   "º do ",
+   "Código de Processo Civil"
+  ],
+  [
+   "art.",
+   ", III, \"a\", da ",
+   "CF/88"
+  ],
+  [
+   "art.",
+   ", do ",
+   "CC"
+  ],
+  [
+   "art.",
+   ", III, \"a\", da ",
+   "CF"
+  ],
+  [
+   "art.",
+   " do ",
+   "CPM"
+  ],
+  [
+   "art.",
+   "º, inciso VII, do ",
+   "CDC"
+  ],
+  [
+   "artigo",
+   " do ",
+   "CDC"
+  ],
+  [
+   "ART.",
+   ", § 2º, DO ",
+   "CDC"
+  ],
+  [
+   "arts.",
+   ", parágrafo único, do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", inciso VII, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", §3º do ",
+   "CPC"
+  ],
+  [
+   "art.",
+   ", § 2º, V, do ",
+   "CPP"
+  ],
+  [
+   "ART.",
+   ", IV, ",
+   "CPP"
+  ],
+  [
+   "artigos",
+   ", inciso IX, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", §2º, do ",
+   "Código de Defesa do Consumidor"
+  ],
+  [
+   "art.",
+   ", I, alínea \"e\", da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   "º, XXXVIII, da ",
+   "Constituição da República"
+  ],
+  [
+   "artigo",
+   ", I, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 3º, inciso I, do ",
+   "CPP"
+  ],
+  [
+   "ART.",
+   ", PARÁGRAFO ÚNICO, DO ",
+   "CPP"
+  ],
+  [
+   "art.",
+   ", § 3º, IV, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   "º, XI, da ",
+   "CF/1988"
+  ],
+  [
+   "art.",
+   "º, XXXVIII, \"c\", da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   ", inciso III, do ",
+   "CPP"
+  ],
+  [
+   "artigo",
+   ", inciso II, alínea \"a\", da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", § 3º, III, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   ", §3º, IV, do ",
+   "CPP"
+  ],
+  [
+   "artigo",
+   "º, inciso XI, da ",
+   "Constituição Federal"
+  ],
+  [
+   "art.",
+   ", § 4º, do ",
+   "NCPC"
+  ],
+  [
+   "art.",
+   ", § 3º, IV, do ",
+   "Código de Processo Penal"
+  ],
+  [
+   "art.",
+   "º, LXXVIII, da ",
+   "Constituição da República"
+  ],
+  [
+   "art.",
+   ", § 2º, IV, do ",
+   "CPP"
+  ],
+  [
+   "art.",
+   "º, X, da ",
+   "Constituição Federal"
+  ],
+  [
+   "artigo",
+   ", § 3º, inciso III, do ",
+   "Código de Processo Penal"
+  ]
+ ],
+ "sumula": [
+  [
+   "Súmula",
+   " ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " n. ",
+   "/",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " ",
+   "/",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " N. ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " n. ",
+   " do ",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " ",
+   " do ",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " ",
+   "/",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " Nº ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " n. ",
+   "/",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " N. ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " ",
+   " do ",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " Nº ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " n. ",
+   " do ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " ",
+   " do ",
+   "Superior Tribunal de Justiça"
+  ],
+  [
+   "SÚMULA",
+   " N. ",
+   " DO ",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " ",
+   " DO ",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " ",
+   " do ",
+   "Supremo Tribunal Federal"
+  ],
+  [
+   "Súmula",
+   " n. ",
+   " do ",
+   "Supremo Tribunal Federal"
+  ],
+  [
+   "SÚMULA",
+   " ",
+   " DO ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   " do ",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " N. ",
+   " DO ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " n. ",
+   " do ",
+   "Superior Tribunal de Justiça"
+  ],
+  [
+   "SÚMULA",
+   " Nº ",
+   " DO ",
+   "STJ"
+  ],
+  [
+   "verbete",
+   " n. ",
+   " da Súmula do ",
+   "Supremo Tribunal Federal"
+  ],
+  [
+   "SÚMULA",
+   " n. ",
+   "/",
+   "STF"
+  ],
+  [
+   "Enunciado",
+   " n. ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " Vinculante n. ",
+   " do ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   " do ",
+   "Supremo Tribunal Federal"
+  ],
+  [
+   "ENUNCIADO",
+   " N. ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   " do ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   " do ",
+   "Superior Tribunal de Justiça"
+  ],
+  [
+   "Súmula",
+   " Vinculante n. ",
+   " do ",
+   "Supremo Tribunal Federal"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   "/ ",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " n.º ",
+   " do ",
+   "STJ"
+  ],
+  [
+   "Verbete",
+   " n. ",
+   "/",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " N.º ",
+   " DO ",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " Nº ",
+   " DO ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " n.º ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " Vinculante n. ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " Vinculante ",
+   " do ",
+   "STF"
+  ],
+  [
+   "Verbete",
+   " n. ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " n.º ",
+   " do ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " n.º ",
+   "/",
+   "STF"
+  ],
+  [
+   "Enunciado",
+   " n. ",
+   " da Súmula do ",
+   "Supremo Tribunal Federal"
+  ],
+  [
+   "SÚMULA",
+   " Nº",
+   "/",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " N.º ",
+   " DO ",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " N.º ",
+   "/",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " N. ",
+   "/ ",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " Vinculante nº ",
+   " do ",
+   "Supremo Tribunal Federal"
+  ],
+  [
+   "Súmula",
+   " nº",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   " /",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " Vinculante ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " n. ",
+   "/ ",
+   "STF"
+  ],
+  [
+   "ENUNCIADO",
+   " N. ",
+   "/",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " VINCULANTE Nº ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súm.",
+   " ",
+   " do ",
+   "STJ"
+  ],
+  [
+   "verbete",
+   " ",
+   "/",
+   "STJ"
+  ],
+  [
+   "ENUNCIADO",
+   " ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Enunciado",
+   " n. ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Enunciado",
+   " n. ",
+   " do ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " n ",
+   " do ",
+   "STJ"
+  ],
+  [
+   "Enunciado",
+   " ",
+   " da Súmula do ",
+   "STJ"
+  ],
+  [
+   "Enunciado",
+   " ",
+   " do ",
+   "Superior Tribunal de Justiça"
+  ],
+  [
+   "verbete",
+   " n. ",
+   " da Súmula do ",
+   "STF"
+  ],
+  [
+   "verbete",
+   " vinculante n. ",
+   " da Súmula do ",
+   "STF"
+  ],
+  [
+   "verbete",
+   " ",
+   " da Súmula do ",
+   "Supremo Tribunal Federal"
+  ],
+  [
+   "Súmula",
+   " n ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " Vinculante nº ",
+   " do ",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " Nº. ",
+   " DO ",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " VINCULANTE N. ",
+   " DO ",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " N.",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " n.",
+   " do ",
+   "Superior Tribunal de Justiça"
+  ],
+  [
+   "ENUNCIADO",
+   " ",
+   "/",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " vinculante n. ",
+   " do ",
+   "STF"
+  ],
+  [
+   "Sumula",
+   " ",
+   " do ",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " VINCULANTE ",
+   "/",
+   "STF"
+  ],
+  [
+   "verbete",
+   " n. ",
+   " do ",
+   "STF"
+  ],
+  [
+   "Súmula",
+   " nº ",
+   "/ ",
+   "STF"
+  ],
+  [
+   "Enunciado",
+   " ",
+   "/",
+   "STJ"
+  ],
+  [
+   "SÚMULA",
+   " N° ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súm.",
+   " ",
+   "/",
+   "STF"
+  ],
+  [
+   "SÚMULA",
+   " N ",
+   " DO ",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " n° ",
+   "/",
+   "STF"
+  ],
+  [
+   "verbete",
+   " nº ",
+   "/",
+   "STJ"
+  ],
+  [
+   "Súmula",
+   " n.",
+   "/",
+   "STJ"
+  ],
+  [
+   "verbete",
+   " n.º ",
+   " da Súmula do ",
+   "STJ"
+  ]
+ ]
+}

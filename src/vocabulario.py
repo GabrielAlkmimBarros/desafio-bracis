@@ -13,6 +13,7 @@ A primeira parte da tupla são os recursos internos (agravos, embargos); a últi
 é a classe-base do processo. É isso que desempata dois registros com o mesmo número.
 """
 import re
+from functools import lru_cache
 
 from .normalizar import sem_acento
 
@@ -37,8 +38,22 @@ _PADROES = [
     (r"CONFLITO DE COMPETENCIA|CC", ("CC",)),
     (r"SUSPENSAO DE LIMINAR E DE SENTENCA|SLS", ("SLS",)),
     (r"SUSPENSAO DE SEGURANCA|SS", ("SS",)),
-    (r"ACAO PENAL|APN", ("APn",)),
+    (r"SUSPENSAO DE LIMINAR|SL", ("SL",)),
+    (r"ACAO PENAL|APN|AP", ("APn",)),
+    (r"ACAO DIRETA DE INCONSTITUCIONALIDADE POR OMISSAO|ADO", ("ADO",)),
     (r"ACAO DIRETA DE INCONSTITUCIONALIDADE|ADI", ("ADI",)),
+    # classes do STF e classes menos comuns do STJ (siglas oficiais dos tribunais)
+    (r"ARGUICAO DE DESCUMPRIMENTO DE PRECEITO FUNDAMENTAL|ADPF", ("ADPF",)),
+    (r"ACAO DECLARATORIA DE CONSTITUCIONALIDADE|ADC", ("ADC",)),
+    (r"ACAO CIVEL ORIGINARIA|ACO", ("ACO",)),
+    (r"MANDADO DE INJUNCAO|MI", ("MI",)),
+    (r"INQUERITO|INQ", ("Inq",)),
+    (r"SUSPENSAO DE TUTELA ANTECIPADA|STA", ("STA",)),
+    (r"HOMOLOGACAO DE DECISAO ESTRANGEIRA|HDE", ("HDE",)),
+    (r"SENTENCA ESTRANGEIRA CONTESTADA|SEC", ("SEC",)),
+    (r"CARTA ROGATORIA|CR", ("CR",)),
+    (r"INCIDENTE DE DESLOCAMENTO DE COMPETENCIA|IDC", ("IDC",)),
+    (r"PEDIDO DE UNIFORMIZACAO DE INTERPRETACAO DE LEI|PUIL", ("PUIL",)),
     (r"CAUTELAR INOMINADA CRIMINAL", ("CauInomCrim",)),
     (r"PETICAO|PET", ("Pet",)),
     # TST
@@ -98,6 +113,11 @@ _TROCAS_OCR = {"0": "O", "5": "S", "1": "LI", "L": "I", "I": "L", "C": "E", "RN"
 def _variantes_ocr(palavra: str, max_trocas: int = 2):
     """Leituras alternativas de uma palavra, desfazendo até `max_trocas` confusões de OCR.
     Troca de letra por letra só em palavras de 4+ caracteres; dígito dentro de palavra, sempre."""
+    letras, digs = sum(c.isalpha() for c in palavra), sum(c.isdigit() for c in palavra)
+    if letras < 2 or digs > letras - 1:
+        return                                   # '55', 'S15', '5l': número (com OCR), não 'SS', 'SLS', 'SL'. Classe
+                                                 # com OCR tem 2+ letras e mais letras que dígitos: 'Rec1amação', '5TJ'
+
     fronteira, vistas = [palavra], {palavra}
     for _ in range(max_trocas):
         nova = []
@@ -115,12 +135,13 @@ def _variantes_ocr(palavra: str, max_trocas: int = 2):
         fronteira = nova
 
 
+@lru_cache(maxsize=50000)
+def _corrigir_palavra(p: str) -> str:
+    return next((v for v in _variantes_ocr(p) if v in _CONHECIDAS), p)
+
+
 def _corrigir_ocr(t: str) -> str:
-    palavras = t.split(" ")
-    for k, p in enumerate(palavras):
-        if p and p not in _CONHECIDAS:
-            palavras[k] = next((v for v in _variantes_ocr(p) if v in _CONHECIDAS), p)
-    return " ".join(palavras)
+    return " ".join(p if (not p or p in _CONHECIDAS) else _corrigir_palavra(p) for p in t.split(" "))
 
 
 def _preparar(texto: str) -> str:
@@ -132,6 +153,14 @@ def _preparar(texto: str) -> str:
     return _corrigir_ocr(re.sub(r"\s+", " ", t).strip())    # 'Reclarnação', 'Rec1amação', 'C0RPUS'
 
 
+@lru_cache(maxsize=100000)
+def palavra_conhecida(palavra: str) -> bool:
+    """A palavra (já com OCR desfeito) é do vocabulário de classes? Uma sequência que tenha alguma palavra
+    desconhecida nunca é classe — serve para descartar começos sem chamar canonizar_classe."""
+    return all(p in _CONHECIDAS for p in _preparar(palavra).split())
+
+
+@lru_cache(maxsize=200000)                # função pura e muito chamada (varredura à esquerda de cada número)
 def canonizar_classe(texto: str) -> tuple[str, ...]:
     """Lê a classe da esquerda para a direita e devolve as siglas canônicas.
 
@@ -167,7 +196,9 @@ TRIBUNAIS_DA_CLASSE = {
     "HC": {"STJ", "STF", "STM"}, "MS": {"STJ", "STF"}, "Rcl": {"STF", "STJ"},
     "AR": {"STJ", "STF"}, "CC": {"STJ"}, "SLS": {"STJ"}, "SS": {"STJ"}, "APn": {"STJ", "STF"},
     "Pet": {"STJ", "STF"}, "CauInomCrim": {"STJ"},
-    "RE": {"STF"}, "ARE": {"STF"}, "ADI": {"STF"},
+    "RE": {"STF"}, "ARE": {"STF"}, "ADI": {"STF"}, "ADO": {"STF"}, "ADPF": {"STF"}, "ADC": {"STF"},
+    "ACO": {"STF"}, "MI": {"STF", "STJ"}, "Inq": {"STF", "STJ"}, "SL": {"STF", "STJ"}, "STA": {"STF", "STJ"},
+    "HDE": {"STJ"}, "SEC": {"STJ", "STF"}, "CR": {"STJ", "STF"}, "IDC": {"STJ"}, "PUIL": {"STJ"},
     "RR": {"TST"}, "AIRR": {"TST"}, "ARR": {"TST"},
     "REspE": {"TSE"}, "AREspE": {"TSE"}, "Rp": {"TSE"}, "RO": {"TSE"}, "AI": {"TSE"},
     "Apl": {"STM"}, "RSE": {"STM"}, "EIN": {"STM"},
