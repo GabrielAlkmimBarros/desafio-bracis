@@ -1,10 +1,19 @@
 # dados do desafio não podem ser redistribuídos e não vão no repositório
 data/
-out/
+*.db
 *.csv
+
+# saídas geradas (src.run, run.sh, testes)
+out/
+saida/
+saida*/
+*_json/
+*.json.tmp
 
 __pycache__/
 *.pyc
 .venv/
 venv/
+.ruff_cache/
+.pytest_cache/
 .DS_Store

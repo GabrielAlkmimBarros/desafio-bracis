@@ -77,10 +77,10 @@ Nos dois casos, `saida/submission.csv` é o arquivo enviado ao Kaggle e `saida/*
    na citação, implícito no número CNJ ou na classe), a classe e a UF.
 
 **Confiança.** Cada decisão cai numa situação (por exemplo, "real: número único" ou "inventada: número ausente,
-texto com ruído"), e a confiança vem do perfil `padrao` em `src/resolver.py`: 1,0 nas situações em que nenhum teste
-registrou erro, 0,99 em "inventada com texto ruidoso" (4 erros em 40.960, ambiguidades entre sigla e número com
-OCR) e valores menores onde o rótulo correto é incerto (súmula sem tribunal, número ambíguo, duplicata, Tema). A
-tabela de evidências está no próprio arquivo. Perfis alternativos: `CONFIANCA_PERFIL=conservador|um bash run.sh ...`.
+texto com ruído"), e a confiança vem do perfil `padrao` em `src/resolver.py`: 1,0 nas situações observadas nos
+testes, todas com acerto de 99,99% ou mais (o pior caso é "inventada com texto ruidoso": 4 erros em 40.960), e
+valores menores só nas situações nunca observadas com rótulo conhecido (súmula sem tribunal, número ambíguo,
+número que só existe em outro tribunal, duplicata). A tabela de evidências está no próprio arquivo. Perfis alternativos: `CONFIANCA_PERFIL=conservador|um bash run.sh ...`.
 
 ## Estrutura
 

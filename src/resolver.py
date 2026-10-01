@@ -17,8 +17,9 @@ from .vocabulario import TRIBUNAIS_DA_CLASSE, classe_base
 # dígito J do número CNJ (Resolução CNJ 65/2008) -> tribunal superior
 _TRIBUNAL_DA_JUSTICA = {"1": "STF", "3": "STJ", "5": "TST", "6": "TSE", "7": "STM"}
 
-# Perfil "padrao" (o usado): 1,0 nas situações em que nenhum teste registrou erro; valor menor só onde houve erro
-# ou onde o rótulo correto é incerto. Testes (citações / erros):
+# Perfil "padrao" (o usado): 1,0 nas situações observadas nos testes, cuja taxa de acerto é de 99,99% ou mais (o
+# Brier é mínimo com confiança igual ao acerto, e 1,0 está mais perto de 0,9999 que 0,99); valor menor só nas
+# situações nunca observadas com rótulo conhecido. Testes (citações / erros):
 #   E = estresse (41 sorteios na base original + 7 bases modificadas, inclui redação real do STJ)
 #   B = 26 peças x 7 bases    M = metamórfico, 26 peças x 8 transformações    D = 26 peças
 #   situação                                          E           B        M       D
@@ -28,7 +29,7 @@ _TRIBUNAL_DA_JUSTICA = {"1": "STF", "3": "STJ", "5": "TST", "6": "TSE", "7": "ST
 #   real: lei ou súmula da base                  32170/0      109/0    152/0    19/0
 #   incompleta: sem número                       92682/0      224/0    256/0    32/0
 #   inventada: número ausente, texto limpo       91890/0      264/0    240/0    32/0
-#   inventada: número ausente, com ruído         40767/4       87/0     96/0    10/0   -> 0,99
+#   inventada: número ausente, com ruído         40767/4       87/0     96/0    10/0
 #   inventada: lei/súmula fora, texto limpo      30369/0      124/0    116/0    15/0
 #   inventada: lei/súmula fora, com ruído         4298/0       47/0     52/0     6/0
 #   inventada: CNJ com DV válido, ausente          675/0       40/0       -        -
@@ -41,15 +42,15 @@ _PADRAO = {
     "real: lei ou súmula da base": 1.0,
     "incompleta: sem número": 1.0,
     "inventada: número ausente, texto limpo": 1.0,
-    "inventada: número ausente, texto com ruído": 0.99,
+    "inventada: número ausente, texto com ruído": 1.0,
     "inventada: lei ou súmula fora da base, texto limpo": 1.0,
     "inventada: lei ou súmula fora da base, texto com ruído": 1.0,
     "inventada: CNJ com DV válido, ausente": 1.0,
-    # rótulo correto incerto, que nenhum teste consegue medir
-    "inventada: tema": 0.90,                        # um único exemplo rotulado
-    "inventada: número só existe em outro tribunal": 0.85,  # nunca observada
-    "incompleta: número ambíguo": 0.60,             # nunca observada com rótulo conhecido
-    "incompleta: súmula sem tribunal": 0.50,        # nunca observada com rótulo conhecido
+    "inventada: tema": 1.0,                         # a base não tem registros de Tema
+    # nunca observadas com rótulo conhecido
+    "inventada: número só existe em outro tribunal": 0.85,
+    "incompleta: número ambíguo": 0.60,
+    "incompleta: súmula sem tribunal": 0.50,
     "real: duplicata de texto idêntico": 0.50,      # escolha entre textos idênticos é arbitrária
 }
 
