@@ -35,6 +35,29 @@ run.sh ...`. Um resumo da base lida sai em stderr.
 Só os JSONs: `python -m src.run --input <pasta_txt> --output <pasta_json> --db <db>` (`--debug` inclui o motivo de
 cada decisão; `--limite-segundos` limita o tempo por peça, 120 s por padrão).
 
+## Reprodução das saídas submetidas
+
+- **Modelos**: nenhum. Não há LLM, embedding nem pesos a referenciar (link e revisão: não se aplica); a decisão
+  vem de regras e do índice da base.
+- **Determinismo**: sem aleatoriedade; `PYTHONHASHSEED=0` fixado no `run.sh` e no `Dockerfile`. Mesma entrada,
+  mesma saída, byte a byte.
+- **Ambiente**: `Dockerfile` (Python 3.12, só biblioteca padrão). O `requirements.txt` (numpy, pandas) serve só
+  às ferramentas de `scripts/` e não é usado na execução.
+
+Comando exato (Docker), dado o `.db` e a pasta de `.txt` do conjunto de teste:
+
+```bash
+docker build -t bracis-solution .
+docker run --rm \
+  -v "/caminho/desafio1_bracis.db:/data/desafio1_bracis.db:ro" \
+  -v "/caminho/txt:/data/txt:ro" \
+  -v "/caminho/saida:/saida" \
+  bracis-solution /data/desafio1_bracis.db /data/txt /saida
+```
+
+Sem Docker (Python 3.10+): `bash run.sh /caminho/desafio1_bracis.db /caminho/txt /caminho/saida`.
+Nos dois casos, `saida/submission.csv` é o arquivo enviado ao Kaggle e `saida/*.json` são os JSONs do contrato.
+
 ## Abordagem
 
 1. **Índice da base** (`src/indice.py`, montado uma vez, ~1 s). A busca de texto (FTS) não é usada, porque devolve

@@ -1,0 +1,18 @@
+# dados do desafio não vão na imagem: entram por volume na execução
+data/
+out/
+saida/
+*.csv
+*.db
+
+.git/
+.gitignore
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# ferramentas de desenvolvimento, fora da execução
+scripts/
+README.md
