@@ -20,6 +20,45 @@ _OCR_DIGITO = str.maketrans({
 })
 
 
+# ----------------------------------------------------------------------------- preparar o texto da peça
+
+_INVISIVEIS = set("\u200b\u200c\u200d\u2060\ufeff\u00ad")              # largura zero, BOM, hífen flexível
+_TROCAS_1A1 = {**{c: "-" for c in "\u2010\u2011\u2012\u2013\u2014\u2015\u2212\ufe63\uff0d"},
+               "\u201c": '"', "\u201d": '"', "\u201e": '"', "\u2018": "'", "\u2019": "'", "\u00b4": "'"}
+_ESPECIAIS = re.compile("[" + "".join(_INVISIVEIS | set(_TROCAS_1A1)) + "\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+
+
+def preparar_texto(texto: str):
+    """Texto da peça numa forma estável para a detecção, com o mapa de volta para as posições originais.
+
+    NFC (acento decomposto vira um caractere só), caracteres invisíveis removidos (largura zero, BOM,
+    hífen flexível), hífens/travessões exóticos -> '-', aspas tipográficas -> '"' e "'", controles -> ' '.
+    Devolve (texto_preparado, ini, fim): o caractere j do texto preparado veio de texto[ini[j]:fim[j]].
+    Se não há nada a preparar, devolve (texto, None, None) e a detecção roda sobre o original.
+    """
+    if not _ESPECIAIS.search(texto) and unicodedata.is_normalized("NFC", texto):
+        return texto, None, None
+    saida, ini, fim = [], [], []
+    i, n = 0, len(texto)
+    while i < n:
+        j = i + 1
+        while j < n and unicodedata.combining(texto[j]):          # letra + acentos combinantes
+            j += 1
+        pedaco = texto[i:j]
+        if pedaco in _INVISIVEIS:
+            novo = ""
+        elif pedaco in _TROCAS_1A1:
+            novo = _TROCAS_1A1[pedaco]
+        elif len(pedaco) == 1 and (ord(pedaco) < 32 and pedaco not in "\t\n\r" or pedaco == "\x7f"):
+            novo = " "
+        else:
+            novo = unicodedata.normalize("NFC", pedaco)
+        for ch in novo:
+            saida.append(ch); ini.append(i); fim.append(j)
+        i = j
+    return "".join(saida), ini, fim
+
+
 def sem_acento(texto: str) -> str:
     nfkd = unicodedata.normalize("NFKD", texto)
     return "".join(ch for ch in nfkd if not unicodedata.combining(ch))

@@ -17,6 +17,7 @@ como o enunciado exige. Os erros são relatados em stderr e a execução termina
 import argparse
 import contextlib
 import json
+import os
 import signal
 import sys
 import traceback
@@ -38,8 +39,9 @@ def ler_texto(caminho: Path) -> str:
             return f.read()
 
 
-class TempoEsgotado(Exception):
-    pass
+class TempoEsgotado(BaseException):
+    """BaseException de propósito: as proteções internas (por detector, por citação) capturam Exception e
+    não podem engolir o estouro de tempo — quem trata é a proteção da peça, que a grava sem citações."""
 
 
 @contextlib.contextmanager
@@ -103,7 +105,18 @@ def montar_json(documento_id: str, texto: str, citacoes: list[dict], debug: bool
     return {"schema_version": SCHEMA_VERSION, "documento_id": documento_id, "citacoes": saida}
 
 
+def gravar_atomico(destino: Path, conteudo: str) -> None:
+    """Grava num temporário e troca de nome: uma interrupção (Ctrl+C, queda) nunca deixa JSON pela metade."""
+    tmp = destino.with_name(destino.name + ".tmp")
+    tmp.write_text(conteudo, encoding="utf-8")
+    os.replace(tmp, destino)
+
+
 def main() -> None:
+    # terminal sem UTF-8 (LC_ALL=C, PYTHONIOENCODING=ascii) não pode derrubar a execução por causa de um acento
+    for fluxo in (sys.stdout, sys.stderr):
+        with contextlib.suppress(Exception):
+            fluxo.reconfigure(errors="backslashreplace")
     ap = argparse.ArgumentParser(description="Caça-Alucinações: detecta e classifica citações.")
     ap.add_argument("--input", required=True, help="pasta com os .txt")
     ap.add_argument("--output", required=True, help="pasta onde gravar os .json")
@@ -114,16 +127,38 @@ def main() -> None:
     args = ap.parse_args()
 
     entrada, saida = Path(args.input), Path(args.output)
-    saida.mkdir(parents=True, exist_ok=True)
-    arquivos = sorted(entrada.glob("*.txt"))
+    if not entrada.is_dir():
+        print(f"erro: pasta de entrada não encontrada: {entrada}", file=sys.stderr)
+        raise SystemExit(2)
+    try:
+        saida.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        print(f"erro: não foi possível criar a pasta de saída {saida}: {e}", file=sys.stderr)
+        raise SystemExit(2)
+    # só arquivos .txt (qualquer caixa) diretamente na pasta; ignora subpastas, outros formatos e ocultos
+    # ('._x.txt' que o macOS cria ao copiar) — cada um viraria um documento fantasma na submissão
+    arquivos = sorted(p for p in entrada.iterdir()
+                      if p.is_file() and p.suffix.lower() == ".txt" and not p.name.startswith("."))
     if not arquivos:
         raise SystemExit(f"nenhum .txt em {entrada}")
 
-    from .indice import Indice
-    indice = Indice(args.db)
+    from .indice import BaseInvalida, Indice
+    try:
+        indice = Indice(args.db)
+    except BaseInvalida as e:      # sem base utilizável não há o que classificar: erro claro, código 2
+        print(f"erro: {e}", file=sys.stderr)
+        raise SystemExit(2)
     print(indice.resumo(), file=sys.stderr)          # diagnóstico da base recebida (não entra na saída)
 
-    falhas = []
+    # JSONs de uma execução anterior sem peça correspondente nesta entrada: só avisa (nada é apagado; a
+    # métrica oficial ignora documentos a mais — o que ela não admite é documento faltando)
+    atuais = {a.stem for a in arquivos}
+    antigos = sorted(v.name for v in saida.glob("*.json") if v.stem not in atuais)
+    if antigos:
+        print(f"aviso: a pasta de saída já tem {len(antigos)} JSON(s) sem peça nesta entrada (mantidos): "
+              f"{antigos[:5]}", file=sys.stderr)
+
+    falhas, nao_gravados = [], []
     for arq in arquivos:
         texto = ""
         try:
@@ -131,16 +166,22 @@ def main() -> None:
             with limite_de_tempo(args.limite_segundos):
                 citacoes = encontrar_citacoes(texto, indice)
             doc = montar_json(arq.stem, texto, citacoes, debug=args.debug)
-        except Exception as e:     # noqa: BLE001  a peça sai vazia, mas sai: nenhuma fica de fora da submissão
+        except (Exception, TempoEsgotado) as e:   # noqa: BLE001  a peça sai vazia, mas sai: nenhuma fica de fora
             falhas.append(arq.name)
             print(f"ERRO em {arq.name}: {type(e).__name__}: {e}; gravado sem citações", file=sys.stderr)
             traceback.print_exc(limit=3, file=sys.stderr)
             doc = montar_json(arq.stem, texto, [])
-        (saida / f"{arq.stem}.json").write_text(
-            json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
+        try:
+            gravar_atomico(saida / f"{arq.stem}.json", json.dumps(doc, ensure_ascii=False, indent=2))
+        except OSError as e:       # sem permissão, disco cheio: segue com as outras peças e avisa no fim
+            nao_gravados.append(arq.name)
+            print(f"ERRO: não foi possível gravar o JSON de {arq.name}: {e}", file=sys.stderr)
     print(f"{len(arquivos)} documentos processados -> {saida}/")
     if falhas:
         print(f"atenção: {len(falhas)} documento(s) com erro, gravados sem citações: {falhas}", file=sys.stderr)
+    if nao_gravados:
+        print(f"ERRO: {len(nao_gravados)} JSON(s) não gravado(s): {nao_gravados}", file=sys.stderr)
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ Súmulas e artigos de lei começam com uma linha de identificação:
 import hashlib
 import re
 import sqlite3
+from pathlib import Path
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 
@@ -213,6 +214,48 @@ def _chave_artigo(texto):
 
 # ----------------------------------------------------------------------------- índice
 
+class BaseInvalida(Exception):
+    """A base recebida não pode ser usada (ausente, corrompida, sem a tabela ou sem id/texto)."""
+
+
+_COLUNAS = ("id", "documento_id", "tribunal", "natureza", "ano", "relator", "texto")
+_OBRIGATORIAS = ("id", "texto")
+
+
+def _abrir_base(caminho_db: str):
+    """Abre a base SÓ PARA LEITURA (nunca cria arquivo; funciona em montagem somente leitura) e monta a
+    consulta com as colunas que existirem — só `id` e `texto` são indispensáveis."""
+    p = Path(caminho_db)
+    if not p.is_file():
+        raise BaseInvalida(f"base não encontrada: {caminho_db}")
+    try:
+        con = sqlite3.connect(p.resolve().as_uri() + "?mode=ro&immutable=1", uri=True)
+        colunas = {r[1].lower(): r[1] for r in con.execute("PRAGMA table_info(documentos)")}
+    except sqlite3.DatabaseError as e:
+        raise BaseInvalida(f"não é uma base SQLite legível ({e}): {caminho_db}") from e
+    if not colunas:
+        raise BaseInvalida(f"a base não tem a tabela 'documentos': {caminho_db}")
+    falta = [c for c in _OBRIGATORIAS if c not in colunas]
+    if falta:
+        raise BaseInvalida(f"a tabela 'documentos' não tem a(s) coluna(s) obrigatória(s) {falta}: {caminho_db}")
+    campos = ", ".join(f'"{colunas[c]}"' if c in colunas else "NULL" for c in _COLUNAS)
+    ordem = f'"{colunas["documento_id"]}"' if "documento_id" in colunas else f'"{colunas["id"]}"'
+    return con, f"SELECT {campos} FROM documentos ORDER BY {ordem}"
+
+
+def _natureza(natureza, texto: str) -> str:
+    """'acordao' | 'sumula' | 'dispositivo'; se a coluna faltar ou vier estranha, deduz pela 1ª linha."""
+    n = (natureza or "").strip().lower() if isinstance(natureza, str) else ""
+    if n in ("acordao", "sumula", "dispositivo"):
+        return n
+    primeira = sem_acento(texto.lstrip()[:200]).upper()
+    if re.match(r"(?:SUMULA|ENUNCIADO)\b", primeira):
+        return "sumula"
+    if re.match(r"ART(?:IGO|\.)", primeira):
+        return "dispositivo"
+    return "acordao"
+
+
 class Indice:
     def __init__(self, caminho_db: str):
         self.fichas: list[Ficha] = []
@@ -220,19 +263,25 @@ class Indice:
         self.por_norma: dict[tuple, Ficha] = {}
         self.tribunais_da_classe: dict[str, set] = defaultdict(set)   # classe-base -> tribunais NA BASE
         self.ignorados: list[str] = []                                  # registros que não puderam ser lidos
-        con = sqlite3.connect(caminho_db)
-        linhas = con.execute("SELECT id, documento_id, tribunal, natureza, ano, relator, texto "
-                             "FROM documentos ORDER BY documento_id").fetchall()
-        con.close()
-        for id_, doc, trib, natureza, ano, relator, texto in linhas:
-            try:
-                self._indexar(id_, doc, trib, natureza, ano, relator, texto)
-            except Exception as e:     # noqa: BLE001  registro estranho: fica fora do índice, com aviso
-                self.ignorados.append(f"{doc}: {type(e).__name__}: {e}")
+        con, consulta = _abrir_base(caminho_db)
+        try:
+            for id_, doc, trib, natureza, ano, relator, texto in con.execute(consulta):   # em fluxo: não
+                try:                                                                       # guarda os textos
+                    self._indexar(id_, doc, trib, natureza, ano, relator, texto)
+                except Exception as e:     # noqa: BLE001  registro estranho: fica fora do índice, com aviso
+                    self.ignorados.append(f"{doc}: {type(e).__name__}: {e}")
+        except sqlite3.DatabaseError as e:
+            raise BaseInvalida(f"erro ao ler a base ({e}): {caminho_db}") from e
+        finally:
+            con.close()
 
     def _indexar(self, id_, doc, trib, natureza, ano, relator, texto):
         """Lê um registro da base e o coloca no índice (número -> fichas ou chave da norma)."""
+        if id_ is None:
+            raise ValueError("registro sem id")
         texto = texto if isinstance(texto, str) else ("" if texto is None else str(texto))
+        doc = doc if doc is not None else str(id_)
+        natureza = _natureza(natureza, texto)
         trib = trib.strip().upper() if isinstance(trib, str) and trib.strip() else None
         f = Ficha(id=id_, documento_id=doc, tribunal=trib, natureza=natureza, ano=ano, relator=relator,
                   assinatura=hashlib.md5(texto.encode("utf-8")).hexdigest())
