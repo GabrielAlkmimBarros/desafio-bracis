@@ -1,19 +1,13 @@
-"""Detector: encontra no texto os trechos que são citação e diz de que espécie são.
+"""Detector: encontra os trechos que são citação e diz a espécie de cada um, sem consultar a base.
 
-Quatro espécies, cada uma com a sua estratégia:
-
-  acordao     'AgInt no AREsp nº 1.996.496/RJ'
-              ÂNCORA NO NÚMERO: acha todo número do texto e olha para a esquerda.
-              Só vira citação se à esquerda houver uma classe processual reconhecida
-              ('AgInt no AREsp'). É isso que descarta 'fls. 790/829', 'OAB/BA 349745',
-              'Processo nº 6706918-...' do cabeçalho: nenhum tem classe antes do número.
+  acordao     'AgInt no AREsp nº 1.996.496/RJ'. Ancorado no número: todo número do texto vira candidato, e só
+              é citação se houver classe processual reconhecida à esquerda. Isso descarta 'fls. 790/829',
+              'OAB/BA 349745' e o número do próprio processo no cabeçalho.
   sumula      'Súmula 331 do TST' | 'Súmula Vinculante 10' | '5úmula 211 do STJ'
+  tema        'Tema 1.046 do STJ'
   artigo      'art. 373, I, do CPC' | 'artigo 7º, XXIX, da Constituição Fedcral'
-  incompleta  'julgado do STF proferido em 2024 pela relatoria de Dias Toffoli'
-              ÂNCORA NO ANO + RELATOR, e olha para a esquerda procurando a cabeça
-              ('julgado', 'precedente', 'acórdão' ou uma classe processual).
-
-O detector não consulta a base: só acha e descreve. Quem decide real/inventada é o resolvedor.
+  incompleta  'julgado do STF proferido em 2024 pela relatoria de Dias Toffoli'. Ancorado no relator e no ano;
+              à esquerda deve haver uma cabeça ('julgado', 'precedente', 'acórdão' ou uma classe processual).
 """
 import bisect
 import re
@@ -21,7 +15,7 @@ import sys
 from dataclasses import dataclass, field
 
 from .leis import ler_lei
-from .normalizar import digitos, numero_canonico, preparar_texto, sem_acento
+from .normalizar import digitos, eh_cnj, numero_canonico, preparar_texto, sem_acento
 from .vocabulario import canonizar_classe, classe_base, palavra_conhecida
 
 
@@ -44,7 +38,7 @@ UFS = {"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "
 TRIBUNAIS = {"STF", "STJ", "TSE", "TST", "STM"}
 _CONECTORES = r"(?:no|na|nos|nas|em|de|do|da|a|ao|o)"
 
-# letras que o OCR do nível 2 confunde (e acentos que somem ou aparecem): 'profcrido', 'relãtoria',
+# letras que o OCR do nível 2 confunde, e acentos que somem ou aparecem: 'profcrido', 'relãtoria',
 # 'Superi0r', '5uperior', 'Minlstro', 'Complernentar'
 _OCR_LETRA = {"a": "[aáàâã]", "e": "[eéêc]", "i": "[iíl1]", "o": "[oóôõ0]", "u": "[uú]", "l": "[l1I]",
               "s": "[s5]", "m": "(?:m|rn)", "ç": "[çc]", " ": r"\s+"}
@@ -73,13 +67,15 @@ def sigla_tribunal(txt: str) -> str:
 
 # ============================================================================ números com posição
 
-# separa pedaços: espaços e / ( ) , ; :  — e também 'ARR-1099' (letra-hífen-dígito),
-# '1.632.479-RJ' (hífen antes de UF) e 'nº1.234' (º colado no número)
+# separa pedaços: espaços e / ( ) , ; :, e também 'ARR-1099' (letra-hífen-dígito), '1.632.479-RJ' (hífen antes
+# de UF) e 'nº1.234' (º colado no número)
 _SEPARADOR = re.compile(
     r"(?<=[A-Za-z]{2})-(?=[OolISsgGbBZz]{0,2}[\-.]?\s*\d)|-(?=[A-Za-z]{2}\b)|(?<=[º°])(?=[\dOl])"
     r"|(?<=\d)-(?=[A-Za-z]{2})"                                 # 'RE 1.492.256-AgR' (sufixo no estilo do STF)
     r"|(?<![A-Za-z])(?<=[nN]\.)(?=[\dOl])"                        # 'HC n.785.562' (número colado no 'n.')
-    r"|(?<=\d)(?=(?:AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\b(?!\s*[/\-–(]\s*[A-Z]{2}\b))"   # '109.956PR' (UF colada, sem outra UF depois)
+    # '109.956PR' (UF colada, sem outra UF depois)
+    r"|(?<=\d)(?=(?:AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\b"
+    r"(?!\s*[/\-–(]\s*[A-Z]{2}\b))"
     r"|[\s/(),;:]+")
 _QUEBRA_CORRIDA = re.compile(r"[,;:()/]")       # estes separadores encerram um número ('.../50000' não emenda)
 _LETRAS_OCR = set("OoQDlLIi|!SsgqGbBZz")
@@ -96,14 +92,14 @@ def _eh_ligacao(p: str) -> bool:
 
 
 def _eh_talvez_numero(p: str, anterior: str = "") -> bool:
-    """'l.' ou 'O' sozinhos: podem ser o começo de um número com OCR ('l.\n718.894').
-    Só entram na corrida se um pedaço numérico vier logo depois."""
+    """'l.' ou 'O' soltos podem começar um número com OCR ('l.\n718.894'); entram na corrida só se um pedaço
+    numérico vier logo depois."""
     miolo = re.sub(r"[.\-–—]", "", p)
     depois_de_ordinal = re.fullmatch(r"[nN][º°.]+[º°]?|N[º°o.]*|No", anterior or "") is not None
     no_meio_do_numero = _eh_pedaco_numerico(anterior or "")          # '1 2 Sl 698': dentro de um número
+    # 'SS 2.888', 'SL 1.234' são siglas de classe; já 'nº SS. 624' é OCR de 55.624
     if not (depois_de_ordinal or no_meio_do_numero) and any(not s.startswith("?") for s in canonizar_classe(miolo)):
-        return False                                     # 'SS 2.888', 'SL 1.234': sigla de classe, não número
-                                                         # (mas 'nº SS. 624' é OCR de 55.624)
+        return False
     return 0 < len(miolo) <= 2 and miolo not in {"o", "a"} and all(c in _LETRAS_OCR for c in miolo)
 
 
@@ -118,22 +114,21 @@ def numeros_no_texto(texto: str):
         pedacos.append((pos, len(texto)))
 
     def proximo_util(k):
-        """O próximo pedaço que não seja só '-' ou '.' de ligação nem outra letra solta de OCR ('l S 99 372')."""
+        """Próximo pedaço que não seja ligação ('-', '.') nem letra solta de OCR ('l S 99 372')."""
         for j in range(k + 1, len(pedacos)):
             p = texto[pedacos[j][0]:pedacos[j][1]]
             if not _eh_ligacao(p) and not _eh_talvez_numero(p, "x"):
                 return p
         return ""
 
-    corrida = []                                 # pedaços da corrida atual
+    corrida = []
     for k, (ini, fim) in enumerate(pedacos):
         p = texto[ini:fim]
         separador = texto[corrida[-1][1]:ini] if corrida else ""
         if corrida and _QUEBRA_CORRIDA.search(separador):
             yield from _fechar(corrida, texto)
             corrida = []
-        # 'l.' ou 'O' soltos entram no começo OU no meio do número ('2.O2 O. 005', '2018 G 26 0000'),
-        # desde que venha um pedaço numérico depois
+        # 'l.' ou 'O' soltos entram no começo ou no meio do número ('2.O2 O. 005') se vier pedaço numérico depois
         if (_eh_pedaco_numerico(p) or (corrida and _eh_ligacao(p)) or
                 (_eh_talvez_numero(p, texto[pedacos[k - 1][0]:pedacos[k - 1][1]] if k else "")
                  and _eh_pedaco_numerico(proximo_util(k)))):
@@ -166,9 +161,9 @@ def _classe_a_esquerda(texto: str, ini_num: int, janela: int = 130):
     # começos possíveis: início de palavra ou logo depois de '(' ('desprovido.(AREsp 1.234')
     inicios = [ini_jan + m.start() for m in re.finditer(r"(?<!\S)\S|(?<=[(\[,;])\S", texto[ini_jan:ini_num])]
     for s in inicios:                                    # do mais distante para o mais próximo
+        # 'e' logo antes do número é conjunção ('2019 e 2020', 'do CP e 306'), nunca a ligação classe-número
         if texto[s:ini_num].strip() == "e" or re.search(r"(?<!\S)e\s*$", texto[s:ini_num]):
-            continue                                     # '2019 e 2020', 'do STJ e 718', 'do CP e 306': o 'e' antes
-                                                         # do número é conjunção — nunca separa classe e número
+            continue
         if texto[s] in "([":
             s += 1                                       # o parêntese de abertura não faz parte da citação
         if re.search(r"[()\[\]]", texto[s:ini_num]):
@@ -181,18 +176,18 @@ def _classe_a_esquerda(texto: str, ini_num: int, janela: int = 130):
             continue                                     # o 'E' (Embargos) veio da conjunção 'e': 'do STJ e nºs 718'
         if conhecidas and classe_base(tuple(conhecidas)) and all(
                 not x.startswith("?") or _neutro(x) for x in siglas):
-            # não começar a citação num conectivo solto ('no AgInt...' -> 'AgInt...'), no 'e' de uma lista
-            # ('..., e AgInt no REsp'), em pontuação, nem num tribunal seguido de pontuação ('STJ. AgInt')
+            # a citação não começa em conectivo ('no AgInt'), no 'e' de uma lista, em pontuação, nem em tribunal
+            # seguido de pontuação ('STJ. AgInt')
             while True:
                 m = re.match(rf"(?:(?i:{_CONECTORES})|e|[-–—.,;:'\"“”‘’«»]+)\s+|[-–—.,;:'\"“”‘’«»]+(?=\S)|"
                              rf"(?:{'|'.join(TRIBUNAIS)})[.,;:]+\s*", texto[s:ini_num])
                 if not m:
                     break
                 s += m.end()
-            siglas = canonizar_classe(texto[s:ini_num])      # a classe é relida depois de ajustar o início
+            siglas = canonizar_classe(texto[s:ini_num])
             conhecidas = [x for x in siglas if not x.startswith("?")]
             if not conhecidas or not classe_base(tuple(conhecidas)):
-                return None                              # sobrou só conectivo ('... e o 1.996.496'): não é classe
+                return None                              # sobrou só conectivo ('... e o 1.996.496')
             palavra = texto[s:ini_num].strip()
             if re.fullmatch(r"[a-zà-ú]{1,4}", palavra):
                 return None                              # 'ado', 'mi', 'sec' minúsculos: palavra, não sigla
@@ -226,27 +221,22 @@ _ENUMERACAO = re.compile(r"\s*,?\s*e\s+(?:n[º°o.]+\s*)?")
 
 
 def _herda_classe(texto: str, anterior: Candidata, ini: int, fim: int) -> bool:
-    """'REsp 1.741.784/PR e 1.996.496/RJ': o 2º número não repete a classe e herda a do 1º. Regra estreita:
-    só ' e ' entre os dois, mesmo formato de número (CNJ x simples, quantidade de dígitos parecida), não é
-    um ano, e — se for número simples — os dois têm UF. 'REsp 1.741.784/PR e 10 dias' ou '... e 2020' não
-    herdam."""
+    """'REsp 1.741.784/PR e 1.996.496/RJ': o segundo número herda a classe do primeiro. Exige só ' e ' entre os
+    dois, mesmo formato (CNJ ou simples, quantidade de dígitos parecida), que não seja um ano e, se for número
+    simples, UF nos dois."""
     if not _ENUMERACAO.fullmatch(texto[anterior.fim:ini]):
         return False
     bruto = texto[ini:fim]
     numero = numero_canonico(bruto)
-    if not numero or eh_cnj_canonico(numero) != eh_cnj_canonico(anterior.numero):
+    if not numero or eh_cnj(numero) != eh_cnj(anterior.numero):
         return False
     if re.fullmatch(r"(?:19|20)\d\d", bruto.strip()) or abs(len(digitos(bruto)) - len(digitos(anterior.numero))) > 1:
         return False
-    if eh_cnj_canonico(numero):
-        return True                                  # número CNJ é inequívoco por si
-    # número simples: os dois com UF ('REsp 1.890.344/RS e 1.890.343/SC') — protege de herdar de um falso
-    # acórdão como 'do CC/2002' (Código Civil lido como Conflito de Competência 2002)
+    if eh_cnj(numero):
+        return True
+    # a exigência de UF evita herdar de um falso acórdão, como 'do CC/2002' (Código Civil lido como Conflito de
+    # Competência 2002)
     return anterior.uf is not None and _uf_a_direita(texto, fim)[1] is not None
-
-
-def eh_cnj_canonico(numero: str | None) -> bool:
-    return bool(numero) and "-" in numero
 
 
 def detectar_acordaos(texto: str) -> list[Candidata]:
@@ -260,14 +250,14 @@ def detectar_acordaos(texto: str) -> list[Candidata]:
         else:
             continue
         num_bruto = texto[ini:fim]
-        # 'Rcl de 2021' é um ANO, não um número de processo -> quem cuida é o detector de incompletas
+        # 'Rcl de 2021': ano, não número de processo (fica para o detector de incompletas)
         if re.search(r"\b(?:de|em)\s*$", texto[s:ini], re.I) and re.fullmatch(r"(19|20)\d\d", num_bruto.strip()):
             continue
         if re.search(r"\n[ \t\xa0]*\n", texto[s:ini]):
             continue                                     # classe e número em parágrafos diferentes
         if len(digitos(num_bruto)) <= 2 and re.match(r"/\d{1,2}\b", texto[fim:fim + 4]):
             continue                                     # '12/3/2024': dia de uma data, não processo
-        # 'não conheceu do habeas corpus. 2. O embargante...': número de parágrafo, não de processo
+        # 'não conheceu do habeas corpus. 2. O embargante': número de parágrafo
         if len(digitos(num_bruto)) <= 2 and re.search(r"[A-Za-zÀ-ú]{3,}\.\s+$", texto[s:ini]):
             continue
         numero = numero_canonico(num_bruto)
@@ -282,8 +272,8 @@ def detectar_acordaos(texto: str) -> list[Candidata]:
 
 # ============================================================================ súmulas
 
-# número com OCR ('B3', '4O4', '2ll'): letras maiúsculas/'l' casadas sem re.I, com ao menos um dígito
-_NUM_OCR = r"(?-i:[OlISBG]*\d[\dOlISBG]*)"      # sem ambiguidade: o primeiro dígito ancora
+# número com OCR ('B3', '4O4', '2ll'): letras maiúsculas e 'l', sem re.I, com ao menos um dígito
+_NUM_OCR = r"(?-i:[OlISBG]*\d[\dOlISBG]*)"
 _SUMULA_PALAVRA = r"[S5$][úu](?:m|rn)(?:u[l1I|]a)?\.?"          # Súmula | Súm. | 5úmula | Súrnula | Súmu1a
 _SUMULA = re.compile(
     rf"(?:(?P<cab>{_SUMULA_PALAVRA}|Verbete|Enunciado)\s+(?:(?P<vinc>{_ocr('vinculante')})\s+)?|\b(?-i:(?P<sv>[S5]V))\s+)"
@@ -296,7 +286,7 @@ _SUMULA = re.compile(
     re.I)
 
 
-# plural: 'Súmulas n. 5 e 7/STJ', 'Súmulas 282 e 356 do STF', 'Súmulas n. 5, 7 e 83/STJ' — uma citação por número
+# plural ('Súmulas n. 5 e 7/STJ', 'Súmulas n. 5, 7 e 83/STJ'): uma citação por número
 _SUMULAS = re.compile(
     rf"(?P<cab>{_SUMULA_PALAVRA[:-4]}s|Enunciados|Verbetes)\s+(?:n[º°os.]*\s*)?"
     rf"(?P<nums>{_NUM_OCR}(?:\s*(?:,|\be\b)\s*{_NUM_OCR})+)"
@@ -323,7 +313,7 @@ def detectar_sumulas(texto: str) -> list[Candidata]:
     for m in _SUMULA.finditer(texto):
         cab = (m["cab"] or "").lower()
         if cab in ("enunciado", "verbete") and not (m["sum"] or m["trib"]):
-            continue                                  # 'Enunciado 5 da Jornada', 'verbete 12': podem ser qualquer coisa
+            continue                                  # 'Enunciado 5 da Jornada': não é súmula
         trib = m["trib"]
         if trib:
             trib = sigla_tribunal(trib)
@@ -339,8 +329,7 @@ def detectar_sumulas(texto: str) -> list[Candidata]:
 
 # ============================================================================ temas
 
-# 'Tema 2.680 da repercussão geral' | 'Tema Repetitivo 1.046 do STJ'. A base não tem registros
-# de Tema — só acórdãos, súmulas e artigos —, então um Tema nunca resolve a um registro.
+# 'Tema 2.680 da repercussão geral' | 'Tema Repetitivo 1.046 do STJ'. A base não tem registros de Tema.
 _TEMA = re.compile(
     r"\b(?i:t[eê]m[aã](?:\s+(?:repetitivo|RG))?\s+(?:n\s*[º°o.]*\s*)?)(?P<num>\d(?:[\d.]*\d)?)"
     r"(?i:\s*,?\s*d[ao]s?\s+(?:repercuss[ãa]o\s+geral|recursos?\s+repetitivos?|STF|STJ|TST|TSE)|\s*/\s*(?:STF|STJ))?")
@@ -386,8 +375,8 @@ def detectar_artigos(texto: str) -> list[Candidata]:
 
 # ============================================================================ incompletas
 
-# palavra de nome próprio: não pode ter maiúscula no meio ('REsp', 'AgInt') nem ser sigla seguida de número
-# ('... Rosa Weber e HC 123'): é onde começa a próxima citação
+# palavra de nome próprio: sem maiúscula no meio ('REsp', 'AgInt') e não seguida de número ('Rosa Weber e HC 123'),
+# onde começa a próxima citação
 _PALAVRA_NOME = r"(?![A-Za-z]*[a-z][A-Z])[A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ÿ'’]+(?![\wÀ-ÿ'’]|\s+(?:n[º°o.]*\s*)?\d)"
 _NOME = rf"{_PALAVRA_NOME}(?:\s+(?:(?:d[aeo]s?|e)\s+)?{_PALAVRA_NOME})*"
 _MIN = rf"(?:{_ocr('min')}(?:{_ocr('istr')}[oa])?\.?\s*)?"                   # 'Min.' | 'Ministro' | 'Minlstro'
@@ -399,8 +388,9 @@ _RELATOR = re.compile(
     rf"\(?\s*r{_ocr('el')}(?:{_ocr('ator')}a?)?\.?\s*{_MIN}))"
     rf"(?P<nome>{_NOME})\)?")
 _ANO_ANTES = re.compile(r"(?P<ano>(?:19|20)\d\d)[\s,;(]*$")                        # '... de 2024, Rel. Min. X'
-_ANO_DEPOIS = re.compile(rf"^(?:\s*\([^()\n]{{0,80}}\)|[^.;()\n]{{0,60}}?)?\s*,?\s*"   # '(Desembargador convocado...)'
-                         rf"(?:\w{{3,12}}[aieãl1]d[oa0]\s+)?(?:em|d[eéc])\s+(?P<ano>(?:19|20)\d\d)", re.I)                                                         # 'Rel. Min. X, julgado em 2021'
+# 'Rel. Min. X, julgado em 2021' | 'Rel. Min. X (Desembargador convocado), de 2021'
+_ANO_DEPOIS = re.compile(r"^(?:\s*\([^()\n]{0,80}\)|[^.;()\n]{0,60}?)?\s*,?\s*"
+                         r"(?:\w{3,12}[aieãl1]d[oa0]\s+)?(?:em|d[eéc])\s+(?P<ano>(?:19|20)\d\d)", re.I)
 _CABECAS = re.compile("(?:" + "|".join(_ocr(p) for p in (
     "julgado", "julgada", "precedente", "acordao", "aresto", "decisao", "voto")) + ")$", re.I)
 _TRIB_TXT = rf"(?:{_TRIB_SIGLA}|{_TRIB_EXTENSO})"
@@ -420,8 +410,7 @@ def _cabeca_valida(cabeca: str) -> bool:
 
 
 def _achar_cabeca(texto: str, ancora: int, meio_rx):
-    """Procura, à esquerda da âncora, a cabeça da referência ('julgado', 'precedente', classe...).
-    Devolve (início, tribunal) ou None."""
+    """Cabeça da referência à esquerda da âncora ('julgado', 'precedente', classe): (início, tribunal) ou None."""
     ini_jan = max(0, ancora - 110)
     for x in re.finditer(r"(?<!\S)\S", texto[ini_jan:ancora]):      # do mais distante para o mais próximo
         s = ini_jan + x.start()
@@ -438,8 +427,8 @@ def _achar_cabeca(texto: str, ancora: int, meio_rx):
 
 
 def detectar_incompletas(texto: str) -> list[Candidata]:
-    """Referência a uma decisão concreta, sem número: CABEÇA [do TRIBUNAL] + ANO + RELATOR.
-    Âncora no relator; o ano pode vir antes ('de 2024, Rel. Min. X') ou depois ('Rel. Min. X, julgado em 2024')."""
+    """Decisão concreta citada sem número: cabeça [do tribunal] + ano + relator. O ano pode vir antes
+    ('de 2024, Rel. Min. X') ou depois ('Rel. Min. X, julgado em 2024') do relator."""
     achados = []
     for m in _RELATOR.finditer(texto):
         ini_rel, fim = m.start(), m.end()
@@ -450,7 +439,7 @@ def detectar_incompletas(texto: str) -> list[Candidata]:
         else:
             depois = _ANO_DEPOIS.match(texto[fim:fim + 120])
             if not depois:
-                continue                                       # sem ano: não é a referência que buscamos
+                continue                                       # sem ano não é decisão concreta
             ano = int(depois["ano"])
             fim += depois.end()
             achou = _achar_cabeca(texto, ini_rel, _MEIO_REL)
@@ -466,9 +455,10 @@ def detectar_incompletas(texto: str) -> list[Candidata]:
 _PRIORIDADE = {"incompleta": 0, "sumula": 1, "artigo": 1, "tema": 1, "acordao": 2}
 
 # sinais de ruído de nível 2 no trecho: quebra de linha, letra colada em dígito ('4S5', 'RE5PE',
-# '170076O'; ordinal 'o'/'a'/'º' não conta), número com espaço ('1 741 784') ou hífen/ponto partido ('33.-')
+# '170076O'; ordinal 'o'/'a'/'º' não conta), número com espaço ('1 741 784'), hífen/ponto partido ('33.-') ou
+# grupo de dígitos todo em letras de OCR ('SS. 413', '5LS 2.883')
 _RUIDO = re.compile(r"\n|\d\s+\d|\d\s*[.\-]\s+\d|\d[.\-]\s*[.\-]|(?<=\d)[^\W\doaºª°_]|[^\W\d_ºª°](?=\d)"
-                    r"|\b[OlLISBGZ5]{1,3}\.?\s+\d")   # grupo de dígitos todo em letras de OCR: 'SS. 413', '5LS 2.883'
+                    r"|\b[OlLISBGZ5]{1,3}\.?\s+\d")
 
 
 def tem_ruido(trecho: str) -> bool:
@@ -476,8 +466,7 @@ def tem_ruido(trecho: str) -> bool:
 
 
 def detectar(texto_original: str) -> list[Candidata]:
-    """Acha as citações. Os spans devolvidos valem sobre `texto_original` (o arquivo como foi distribuído),
-    mesmo quando a detecção roda sobre o texto preparado (NFC, sem invisíveis, hífens unificados)."""
+    """Candidatas com spans sobre `texto_original`, embora a detecção rode sobre o texto preparado."""
     texto, mapa_ini, mapa_fim = preparar_texto(texto_original)
     achadas = _detectar(texto)
     if mapa_ini is not None:
@@ -489,14 +478,14 @@ def detectar(texto_original: str) -> list[Candidata]:
 def _detectar(texto: str) -> list[Candidata]:
     todas = []
     for detector in (detectar_incompletas, detectar_sumulas, detectar_temas, detectar_artigos, detectar_acordaos):
-        try:                       # um detector com erro não derruba os outros: perde-se só a parte dele
+        try:                       # um detector com erro perde só as próprias candidatas
             todas += detector(texto)
         except Exception as e:     # noqa: BLE001
-            print(f"aviso: {detector.__name__} falhou ({type(e).__name__}: {e}); seguindo sem ele", file=sys.stderr)
-    # sobreposição: fica a de maior prioridade (e, empatando, a mais longa)
+            print(f"aviso: {detector.__name__} falhou ({type(e).__name__}: {e}); seguindo sem ele",
+                  file=sys.stderr)
+    # sobreposição: fica a de maior prioridade e, empatando, a mais longa. As escolhidas não se sobrepõem entre
+    # si, então basta comparar cada candidata com as vizinhas na ordem de início (busca binária)
     todas.sort(key=lambda c: (_PRIORIDADE[c.especie], -(c.fim - c.inicio)))
-    # as já escolhidas não se sobrepõem: basta comparar a candidata com as vizinhas na ordem de início
-    # (antes era contra todas: custo quadrático numa peça com dezenas de milhares de citações)
     inicios, escolhidas = [], []
     for c in todas:
         k = bisect.bisect_left(inicios, c.inicio)

@@ -1,29 +1,13 @@
-"""Prova de que o sistema não depende do banco de desenvolvimento: roda as 26 peças contra cópias
-MODIFICADAS do .db e confere, com a métrica oficial, se a classificação continua coerente.
+"""Roda as 26 peças contra cópias modificadas da base e confere, com o gabarito ajustado, que a macro-F1 continua 1.
 
-Para cada variante, o gabarito é transformado do jeito que a definição do desafio manda:
-    registro removido         -> a citação real que apontava para ele passa a ser 'inventada'
-    id trocado                -> a citação real passa a esperar o id novo
-    norma reescrita           -> mesma norma, cabeçalho escrito de outro jeito: continua 'real'
-Variantes:
-    ids_trocados       todos os ids e documento_id renumerados/embaralhados
-    removidos          ~25% dos acórdãos de número único e 3 normas apagados
-    normas_diferentes  cabeçalhos das normas reescritos em outros formatos, 2 normas apagadas,
-                       3 normas novas (inclusive de lei que o vocabulário não conhece)
-    sem_normas         nenhuma súmula nem artigo na base
-    so_normas          nenhum acórdão na base
-    tribunais_novos    acórdãos não citados com tribunal desconhecido ('TRF4') ou nulo
-    sem_fts            sem a tabela documentos_fts
-Nota esperada em toda variante: macro-F1 = 1 nos dois níveis (e nenhum erro de execução).
-
-Uso:  python scripts/bancos_modificados.py [--db data/desafio1_bracis.db] [--variante X] [--manter PASTA]
+Uso:  python scripts/bancos_modificados.py [--variante X] [--manter PASTA] [--db BASE]
 """
 import argparse
 import random
-from collections import Counter, defaultdict
 import sqlite3
 import sys
 import tempfile
+from collections import Counter, defaultdict
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]

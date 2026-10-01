@@ -1,15 +1,4 @@
-"""Quanto cada perfil de confiança ganharia ou perderia no conjunto oculto, conforme a taxa de erro.
-
-A classificação é a mesma em todos os perfis; só muda a confiança, que entra no bônus:
-    score = s · (1 + 0,10 · (1 − Brier)),   Brier = média de (confiança − acertou)² nas citações casadas
-Então a diferença entre perfis é s · 0,10 · (Brier_A − Brier_B) — aqui com s ≈ 1.
-
-A composição de situações do conjunto oculto é aproximada pela das 26 peças (a organização diz que
-a distribuição de classes é equivalente). Para cada taxa de erro e, dois modelos:
-    uniforme     toda citação casada erra com probabilidade e
-    concentrado  os mesmos e·N erros caem só nas inventadas (acórdão, lei e súmula) — onde as versões
-                 que ainda não conheciam as variações do estresse erraram (ver scripts/calibracao.py)
-Brier esperado por situação s com confiança c e taxa de erro e_s:  (1 − e_s)·(1 − c)² + e_s·c²
+"""Brier esperado de cada perfil de confiança para taxas de erro de 0 a 10%, sobre a composição das 26 peças.
 
 Uso:  python scripts/cenarios_confianca.py
 """

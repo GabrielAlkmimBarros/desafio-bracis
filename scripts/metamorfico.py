@@ -1,20 +1,6 @@
-"""Testes metamórficos: transformações do texto que NÃO podem mudar a resposta.
+"""Testes metamórficos: transformações das 26 peças que não podem mudar a resposta (reflow, caixa alta, nbsp...).
 
-Cada transformação é aplicada às 26 peças; os spans do gabarito são remapeados junto com o texto, e a
-nota é recalculada com a métrica oficial. Não depende de como o sistema foi escrito: se a transformação
-preserva o sentido, a classificação tem de continuar perfeita.
-
-    reflow           quebra as linhas de novo, em outra largura (como extração de PDF)
-    espacos          espaços duplicados e quebras de linha trocadas por espaço e vice-versa
-    caixa_alta       documento inteiro em MAIÚSCULAS
-    rodape           após cada acórdão citado, ', relator Ministro X, Terceira Turma, julgado em ..., DJe de ...'
-    parenteses       cada citação entre parênteses, precedida de 'STJ, ' (acórdãos)
-    nbsp             espaços dentro das citações trocados por espaço inseparável
-    hifenizacao      palavras longas partidas no fim da linha com '-\\n' (fora das citações)
-    prosa_externa    (com --prosa PASTA) parágrafos de decisões reais intercalados entre os parágrafos;
-                     o que for detectado DENTRO da prosa inserida não é contado (é outro texto)
-
-Uso:  python scripts/metamorfico.py [--prosa PASTA_COM_TXT] [--transformacao X]
+Uso:  python scripts/metamorfico.py [--transformacao X] [--prosa PASTA_COM_TXT]
 """
 import argparse
 import random
@@ -79,8 +65,11 @@ def transformar(nome, texto, gold, rng, prosa):
         out, col = [], 0
         for ch in plano:
             if ch == " " and col >= largura:
-                out.append("\n"); col = 0; continue
-            out.append(ch); col = 0 if ch == "\n" else col + 1
+                out.append("\n")
+                col = 0
+                continue
+            out.append(ch)
+            col = 0 if ch == "\n" else col + 1
         novo = "".join(out)
         return novo, {i: i for i in range(len(texto) + 1)}, []      # mesmo tamanho: mapa identidade
     if nome == "espacos":

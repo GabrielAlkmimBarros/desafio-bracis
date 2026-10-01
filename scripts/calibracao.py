@@ -1,70 +1,33 @@
-"""Evidência da calibração: acerto por situação, ao lado da confiança adotada.
+"""Acerto por situação do resolvedor nas 26 peças e no estresse (seções A2, B, C, D), ao lado da confiança adotada.
 
-Para cada situação do resolvedor (src/resolver.py, tabela CONFIANCA) mostra:
-    dev      citações das 26 peças casadas com o gabarito (IoU >= 0,5) e a fração correta
-    estresse citações sintéticas do scripts/estresse.py (seções A2, B, C, D) detectadas e a
-             fração correta
-Só entram citações casadas/detectadas, porque é sobre elas que a métrica calcula o Brier.
-
-O gabarito é usado aqui só para MEDIR; os valores da tabela não são ajustados a ele.
-
-Com --raiz, roda o mesmo levantamento sobre outra cópia do código (ex.: um worktree do commit
-anterior às correções do estresse) — é assim que se mede o acerto em variações que o sistema
-ainda não tinha visto:
-    git worktree add /tmp/pre 61cedf0 && ln -s "$PWD/data" /tmp/pre/data
-    python scripts/calibracao.py --raiz /tmp/pre
-
-Com --db, o estresse é gerado a partir de outra base (ex.: as bases modificadas de
-scripts/bancos_modificados.py --manter PASTA); as 26 peças só entram com a base original.
-
-Uso:  python scripts/calibracao.py [--raiz CAMINHO] [--db BASE]
+Uso:  python scripts/calibracao.py [--db BASE]
 """
 import argparse
 import random
-import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
-# mesmo critério de ruído do detector atual (src/detectar.py, tem_ruido), para versões antigas
-_RUIDO = re.compile(r"\n|\d\s+\d|\d\s*[.\-]\s+\d|\d[.\-]\s*[.\-]|(?<=\d)[^\W\doaºª°_]|[^\W\d_ºª°](?=\d)")
 
 
-def situacao(c, r, trecho="") -> str:
-    """A situação vem no começo do motivo ('[real: número único] ...'). Versões antigas do resolvedor
-    não a escrevem; aí ela é deduzida do caminho da decisão, com os mesmos nomes das atuais sempre que
-    possível (real de acórdão fica agregado: a versão antiga não separa único/desempate)."""
-    m = r.get("motivo", "")
-    if m.startswith("["):
-        return m[1:m.index("]")]
-    cl, ruido = r["classificacao"], ("texto com ruído" if _RUIDO.search(trecho) else "texto limpo")
-    if c.especie in ("sumula", "artigo"):
-        if cl == "incompleta":
-            return "incompleta: súmula sem tribunal"
-        return "real: lei ou súmula da base" if cl == "real" else f"inventada: lei ou súmula fora da base, {ruido}"
-    if c.especie == "tema":
-        return "inventada: tema"
-    if c.especie == "incompleta":
-        return "incompleta: sem número"
-    if cl == "real":
-        return "real: acórdão (versão antiga, agregado)"
-    return f"inventada: número ausente, {ruido}" if cl == "inventada" else "incompleta: número ambíguo"
+def situacao(r) -> str:
+    """A situação vem no começo do motivo: '[real: número único] ...'."""
+    m = r["motivo"]
+    return m[1:m.index("]")]
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--raiz", type=Path, default=RAIZ, help="cópia do código a medir (padrão: esta)")
-    ap.add_argument("--db", type=Path, default=RAIZ / "data" / "desafio1_bracis.db", help="base (padrão: a original)")
+    ap.add_argument("--db", type=Path, default=RAIZ / "data" / "desafio1_bracis.db",
+                    help="base (as 26 peças só entram com a original)")
     args = ap.parse_args()
-    # o código medido vem da --raiz e é importado PRIMEIRO: o estresse, importado depois,
-    # reaproveita esse mesmo pacote `src` já carregado
-    sys.path.insert(0, str(args.raiz.resolve()))
-    from src.detectar import detectar                  # noqa: E402
+    sys.path.insert(0, str(RAIZ))
+    from src.detectar import detectar                   # noqa: E402
     from src.indice import Indice                       # noqa: E402
-    from src.resolver import resolver                   # noqa: E402
+    from src.resolver import CONFIANCA, resolver        # noqa: E402
     sys.path.insert(0, str(RAIZ / "oficial"))
-    sys.path.insert(0, str(RAIZ / "scripts"))           # geradores do estresse ATUAL, sempre
+    sys.path.insert(0, str(RAIZ / "scripts"))
     import estresse as E                                # noqa: E402
     import kaggle_metric as km                          # noqa: E402
     from avaliar import carregar_gabarito              # noqa: E402
@@ -87,7 +50,7 @@ def main():
         for gi, pi in pares:
             gd, r = golds[gi], rs[pi]
             ok = r["classificacao"] == gd["classe"] and (gd["classe"] != "real" or str(r["id_canonico"]) == gd["id"])
-            dev[situacao(cs[pi], r, texto[cs[pi].inicio:cs[pi].fim])][ok] += 1
+            dev[situacao(r)][ok] += 1
 
     # ---- estresse (mesmos geradores e sementes do scripts/estresse.py)
     rngs = {s: random.Random(s) for s in ("A2", "B", "C", "D")}
@@ -104,7 +67,7 @@ def main():
         if esperado == "real" and r["classificacao"] == "incompleta" and "ambíguo" in r["motivo"]:
             return                                   # registro ambíguo: não há resposta certa conhecida
         ok = r["classificacao"] == esperado and (esperado != "real" or r["id_canonico"] in ids)
-        est[situacao(cs[0], r, texto[cs[0].inicio:cs[0].fim])][ok] += 1
+        est[situacao(r)][ok] += 1
 
     for f in [f for f in ix.fichas if f.natureza == "acordao" and f.numero and f.classe]:
         ids = {x.id for x in ix.fichas if x.assinatura == f.assinatura}
@@ -127,10 +90,6 @@ def main():
                 for _, cit in gerador:
                     conta(cit, esperado, ids, rng)
 
-    try:
-        from src.resolver import CONFIANCA             # noqa: E402
-    except ImportError:
-        CONFIANCA = {}
     todas = sorted(set(dev) | set(est) | set(CONFIANCA))
     print(f"{'situação':<56}{'conf.':>6}{'dev n':>8}{'acerto':>8}{'estr. n':>9}{'acerto':>8}")
     for s in todas:

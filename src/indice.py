@@ -1,26 +1,20 @@
-"""Índice da base canônica: uma "ficha" de identidade para cada registro.
+"""Índice da base canônica: número do processo -> registros, lido do cabeçalho de cada registro.
 
-Por que não usar a busca de texto (FTS) direto? Porque ela devolve todo documento
-que MENCIONA um número, e acórdãos citam uns aos outros o tempo todo. O que
-identifica um registro é o cabeçalho dele — então lemos o cabeçalho de cada um,
-uma vez, e montamos um dicionário número -> fichas.
-
-Cada tribunal escreve o cabeçalho de um jeito:
+A busca de texto (FTS) não serve para isso: devolve todo documento que menciona o número, e acórdãos citam
+uns aos outros. O que identifica um registro é o próprio cabeçalho, e cada tribunal escreve o seu de um jeito:
   STJ  'AgInt no AGRAVO EM RECURSO ESPECIAL Nº 1.996.496 - RJ (2021/...)'
   STF  '22/04/2026 PRIMEIRA TURMA AG.REG. NA RECLAMAÇÃO 76.532 RIO DE JANEIRO RELATOR...'
   TSE  'TRIBUNAL SUPERIOR ELEITORAL ACÓRDÃO RECURSO ESPECIAL ELEITORAL Nº 0600530-94.2020.6.26.0171 - ...'
   STM  '... APELAÇÃO CRIMINAL Nº 7000449-40.2023.7.00.0000/RS RELATOR: ...'
-  TST  o número NÃO está no topo; aparece em 'Vistos, relatados e discutidos estes
-       autos de Recurso de Revista nº TST-RR-79500-16.2009.5.15.0016 ...'
-Súmulas e artigos de lei começam com uma linha de identificação:
-       'Súmula n. 83 do STJ'  |  'Artigo 373 da Lei nº 13.105, de 16 de março de 2015'
+  TST  número fora do topo: 'Vistos, relatados e discutidos estes autos de Recurso de Revista nº TST-RR-...'
+Súmulas e artigos começam com uma linha de identificação: 'Súmula n. 83 do STJ', 'Artigo 373 da Lei nº ...'.
 """
 import hashlib
 import re
 import sqlite3
-from pathlib import Path
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from .normalizar import digitos, dv_cnj_valido, eh_cnj, justica_cnj, numero_canonico, sem_acento
 from .vocabulario import canonizar_classe, classe_base
@@ -77,7 +71,8 @@ def _uf_por_nome(nome: str) -> str | None:
 
 def _cabecalho_stj(texto):
     h = _espacos(_RUIDO_STJ.sub(" ", texto[:600]))
-    m = re.search(rf"^(?P<classe>.{{2,160}}?)\s*N\s*[º°o]\s*\.?\s*(?P<num>[\d\.]{{1,12}})\s*[-–]\s*(?P<uf>[A-Z]{{2}})\b", h)
+    m = re.search(r"^(?P<classe>.{2,160}?)\s*N\s*[º°o]\s*\.?\s*(?P<num>[\d\.]{1,12})\s*[-–]\s*"
+                  r"(?P<uf>[A-Z]{2})\b", h)
     if m:
         return dict(classe=m["classe"], numero=numero_canonico(m["num"]), uf=m["uf"], apelidos=[])
     return None
@@ -93,11 +88,8 @@ def _cabecalho_stf(texto):
 
 
 def _cabecalho_cnj(texto, justica):
-    """TSE e STM: a classe vem logo antes de 'Nº <número>' no topo do documento.
-
-    TSE antigo traz dois números: 'Nº 36.038 ( 43342-43.2009.6.00.0000)'. O CNJ é o
-    principal; o antigo vira um apelido (a peça pode citar qualquer um dos dois).
-    """
+    """TSE e STM: classe logo antes de 'Nº <número>' no topo. Com dois números ('Nº 36.038 ( 43342-43.2009...)'),
+    o CNJ é o principal e o antigo vira apelido, porque a peça pode citar qualquer um dos dois."""
     h = _espacos(texto[:1500])
     for m in re.finditer(r"(?P<classe>[A-ZÁÉÍÓÚÂÊÔÃÕÇ .\-]{3,160}?)\s*(?:N\s*[º°o‚]?\s*\.?\s*)?"
                          r"(?P<resto>\d[\d\s.\-–()]{3,60})", h):
@@ -113,7 +105,8 @@ def _cabecalho_cnj(texto, justica):
         apelidos = [numero_canonico(antigo)] if antigo and digitos(antigo) else []
         return dict(classe=classe, numero=numero, uf=uf[1] if uf else None, apelidos=apelidos)
     # TSE bem antigo: só o número "de classe", sem CNJ ('AÇÃO CAUTELAR Nº 3.334')
-    m = re.search(rf"(?P<classe>[A-ZÁÉÍÓÚÂÊÔÃÕÇ .\-]{{3,160}}?)\s*N\s*[º°o]\s*\.?\s*(?P<num>{_NUM_SIMPLES})\b", h)
+    m = re.search(rf"(?P<classe>[A-ZÁÉÍÓÚÂÊÔÃÕÇ .\-]{{3,160}}?)\s*N\s*[º°o]\s*\.?\s*"
+                  rf"(?P<num>{_NUM_SIMPLES})\b", h)
     if m:
         classe = re.split(r"ACÓRDÃO|ACORDAO|Pleno|STM|\d{2}/\d{2}/\d{4}", m["classe"])[-1]
         return dict(classe=classe, numero=numero_canonico(m["num"]), uf=None, apelidos=[])
@@ -121,8 +114,8 @@ def _cabecalho_cnj(texto, justica):
 
 
 def _cabecalho_tst(texto):
-    """TST: o número do próprio processo está em 'Vistos, relatados e discutidos estes
-    autos de <classe> nº TST-<siglas>-<número CNJ>' (ou no rodapé 'PROCESSO Nº TST-...')."""
+    """TST: número em 'Vistos, relatados e discutidos estes autos de <classe> nº TST-<siglas>-<CNJ>'
+    ou no rodapé 'PROCESSO Nº TST-...'."""
     t = _espacos(texto)
     padroes = [
         rf"Vistos,?\s+relatados\s+e\s+discutidos\s+(?:estes|os\s+presentes|esses)?\s*autos\s+de\s+"
@@ -137,8 +130,7 @@ def _cabecalho_tst(texto):
 
 
 def _cnj_mais_frequente(texto, justica):
-    """Plano B: o número CNJ válido (dígito verificador ok) que mais aparece no texto.
-    O próprio processo costuma ser repetido em rodapés e na certidão de julgamento."""
+    """CNJ válido mais frequente no texto: o próprio processo se repete em rodapés e na certidão de julgamento."""
     nums = [numero_canonico(x["cnj"]) for x in re.finditer(_CNJ, _espacos(texto)) if x["j"] == justica]
     nums = [n for n in nums if n and dv_cnj_valido(n)]
     return Counter(nums).most_common(1)[0][0] if nums else None
@@ -150,7 +142,7 @@ _NOMES_NO_TEXTO = {"STJ": r"SUPERIOR TRIBUNAL DE JUSTI[ÇC]A", "STF": r"SUPREMO 
 
 
 def _tribunal_pelo_texto(texto: str) -> str | None:
-    """Para registro sem tribunal (ou com tribunal desconhecido): o tribunal mais nomeado no início do texto."""
+    """Tribunal mais nomeado no início do texto (registro sem tribunal ou com tribunal desconhecido)."""
     t = texto[:3000].upper()
     contagem = {sig: len(re.findall(rx, t)) for sig, rx in _NOMES_NO_TEXTO.items()}
     melhor = max(contagem, key=contagem.get)
@@ -166,23 +158,23 @@ def _tribunal_pelo_texto(texto: str) -> str | None:
 # ----------------------------------------------------------------------------- normas
 
 def _chave_pelo_detector(texto: str, natureza: str, tribunal: str | None):
-    """Identifica a norma pela primeira linha do registro, com as MESMAS funções que leem a citação
-    nas peças — assim 'Súmula nº 7 do STJ', 'SÚMULA 7 DO STJ', 'Art. 5º da CF/88' e 'Artigo 5º da
-    Constituição Federal de 1988' viram a mesma chave dos dois lados. Súmula sem tribunal no cabeçalho
-    usa a coluna `tribunal` do próprio registro."""
-    from .detectar import detectar_artigos, detectar_sumulas, sigla_tribunal   # (detectar não importa indice)
+    """Chave da norma lida da primeira linha do registro com os mesmos detectores usados nas peças, para que
+    'Art. 5º da CF/88' e 'Artigo 5º da Constituição Federal de 1988' gerem a mesma chave."""
+    from .detectar import detectar_artigos, detectar_sumulas, sigla_tribunal
     primeira = texto.strip().split("\n", 1)[0][:300]
     if natureza == "sumula":
         for c in detectar_sumulas(primeira):
             if c.chave_norma:
                 return c.chave_norma
             n = (re.findall(r"\d+", primeira[c.inicio:c.fim]) or [""])[-1]
-            if tribunal and n:                   # 'Súmula 7' sem tribunal no cabeçalho: usa a coluna do registro
+            if tribunal and n:                   # 'Súmula 7' sem tribunal: usa a coluna do registro
                 return ("sumula", sigla_tribunal(tribunal), False, int(n))
         return None
     cs = detectar_artigos(primeira)
     return cs[0].chave_norma if cs else None
 
+
+# leituras diretas da linha de identificação, usadas quando os detectores não reconhecem a norma
 
 def _chave_sumula(texto):
     m = re.match(r"\s*Súmula\s+(Vinculante\s+)?n\.?\s*(\d+)\s+do\s+(STF|STJ|TST|TSE)", texto, re.I)
@@ -223,8 +215,8 @@ _OBRIGATORIAS = ("id", "texto")
 
 
 def _abrir_base(caminho_db: str):
-    """Abre a base SÓ PARA LEITURA (nunca cria arquivo; funciona em montagem somente leitura) e monta a
-    consulta com as colunas que existirem — só `id` e `texto` são indispensáveis."""
+    """Abre a base só para leitura (nunca cria arquivo) e monta a consulta com as colunas existentes;
+    só `id` e `texto` são obrigatórias."""
     p = Path(caminho_db)
     if not p.is_file():
         raise BaseInvalida(f"base não encontrada: {caminho_db}")
@@ -244,7 +236,7 @@ def _abrir_base(caminho_db: str):
 
 
 def _natureza(natureza, texto: str) -> str:
-    """'acordao' | 'sumula' | 'dispositivo'; se a coluna faltar ou vier estranha, deduz pela 1ª linha."""
+    """'acordao' | 'sumula' | 'dispositivo'; se a coluna faltar ou vier inválida, deduz pela primeira linha."""
     n = (natureza or "").strip().lower() if isinstance(natureza, str) else ""
     if n in ("acordao", "sumula", "dispositivo"):
         return n
@@ -261,14 +253,15 @@ class Indice:
         self.fichas: list[Ficha] = []
         self.por_numero: dict[str, list[Ficha]] = defaultdict(list)
         self.por_norma: dict[tuple, Ficha] = {}
-        self.tribunais_da_classe: dict[str, set] = defaultdict(set)   # classe-base -> tribunais NA BASE
+        self.tribunais_da_classe: dict[str, set] = defaultdict(set)   # classe-base -> tribunais na base
         self.ignorados: list[str] = []                                  # registros que não puderam ser lidos
         con, consulta = _abrir_base(caminho_db)
         try:
-            for id_, doc, trib, natureza, ano, relator, texto in con.execute(consulta):   # em fluxo: não
-                try:                                                                       # guarda os textos
+            # lida em fluxo: os textos não ficam em memória
+            for id_, doc, trib, natureza, ano, relator, texto in con.execute(consulta):
+                try:
                     self._indexar(id_, doc, trib, natureza, ano, relator, texto)
-                except Exception as e:     # noqa: BLE001  registro estranho: fica fora do índice, com aviso
+                except Exception as e:     # noqa: BLE001  registro ilegível fica fora do índice, com aviso
                     self.ignorados.append(f"{doc}: {type(e).__name__}: {e}")
         except sqlite3.DatabaseError as e:
             raise BaseInvalida(f"erro ao ler a base ({e}): {caminho_db}") from e
@@ -276,7 +269,6 @@ class Indice:
             con.close()
 
     def _indexar(self, id_, doc, trib, natureza, ano, relator, texto):
-        """Lê um registro da base e o coloca no índice (número -> fichas ou chave da norma)."""
         if id_ is None:
             raise ValueError("registro sem id")
         texto = texto if isinstance(texto, str) else ("" if texto is None else str(texto))
@@ -323,9 +315,10 @@ class Indice:
         if justica and (not r["numero"] or cnj_quebrado):
             plano_b = _cnj_mais_frequente(texto, justica)
             if plano_b:
-                f.avisos.append(f"número do cabeçalho {r['numero']} inválido/ausente; usando o mais frequente {plano_b}")
+                f.avisos.append(f"número do cabeçalho {r['numero']} inválido/ausente; "
+                                f"usando o mais frequente {plano_b}")
                 if r["numero"]:
-                    r["apelidos"].append(r["numero"])      # guarda o do cabeçalho mesmo assim
+                    r["apelidos"].append(r["numero"])      # o do cabeçalho continua valendo como apelido
                 r["numero"] = plano_b
             elif r["numero"]:
                 f.avisos.append(f"dígito verificador inválido em {r['numero']}; mantido")

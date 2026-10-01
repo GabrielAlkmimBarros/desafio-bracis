@@ -1,32 +1,26 @@
-"""Vocabulário jurídico: classes processuais e seus nomes/abreviações.
+"""Classes processuais: qualquer grafia da classe vira uma tupla de siglas canônicas.
 
-`canonizar_classe` transforma qualquer forma de escrever a classe numa tupla de
-siglas canônicas. Exemplos:
+    'AgInt no AGRAVO EM RECURSO ESPECIAL' -> ('AgInt', 'AREsp')
+    'Rec. Esp.' | 'R.Esp.' | 'REsp'       -> ('REsp',)
+    'TST-ED-E-ED-RR'                      -> ('ED', 'E', 'ED', 'RR')
 
-    'AgInt no AGRAVO EM RECURSO ESPECIAL'        -> ('AgInt', 'AREsp')
-    'EDcl nos EDcl no AgInt no ARESP'            -> ('ED', 'ED', 'AgInt', 'AREsp')
-    'AG.REG. NA RECLAMAÇÃO'                      -> ('AgRg', 'Rcl')
-    'Rec. Esp.'  |  'R.Esp.'  |  'REsp'          -> ('REsp',)
-    'TST-ED-E-ED-RR'                             -> ('ED', 'E', 'ED', 'RR')
-
-A primeira parte da tupla são os recursos internos (agravos, embargos); a última
-é a classe-base do processo. É isso que desempata dois registros com o mesmo número.
+As primeiras siglas são recursos internos; a última é a classe-base do processo.
 """
 import re
 from functools import lru_cache
 
 from .normalizar import sem_acento
 
-# (padrão sobre texto normalizado, siglas). A ordem importa: nomes mais longos
-# primeiro, para "AGRAVO EM RECURSO ESPECIAL" não ser lido como "AGRAVO" + "RESP".
+# (padrão sobre o texto normalizado, siglas). A ordem importa: nomes mais longos primeiro, para que
+# "AGRAVO EM RECURSO ESPECIAL" não seja lido como "AGRAVO" + "RESP".
 _PADROES = [
     # ---- classes-base com nome composto (antes das partes que as compõem)
     (r"AGRAVO EM RECURSO ESPECIAL ELEITORAL|ARESPE(?:L)?", ("AREspE",)),
     (r"RECUR(?:SO)? ESPECIAL ELEITORAL|RESPE(?:L)?", ("REspE",)),
     (r"EMBARGOS DE DIVERGENCIA EM AGRAVO EM RECURSO ESPECIAL|EARESP", ("EDiv", "AREsp")),
     (r"EMBARGOS DE DIVERGENCIA EM RESP|EMBARGOS DE DIVERGENCIA EM RECURSO ESPECIAL|ERESP", ("EDiv", "REsp")),
-    # plural por extenso, sem grupos opcionais ('REsps n. X/AL e n. Y/AL', 'Recursos Especiais n. ...'):
-    # as palavras dos padrões alimentam o vocabulário de palavras conhecidas
+    # singular e plural escritos por extenso, sem grupos opcionais: as palavras dos padrões formam
+    # o vocabulário de palavras conhecidas (_CONHECIDAS)
     (r"AGRAVOS EM RECURSOS ESPECIAIS|AGRAVO EM RECURSO ESPECIAL|ARESPS|ARESP|AG RESP|AGRESP", ("AREsp",)),
     (r"RECURSOS ESPECIAIS|RECURSO ESPECIAL|RESPS|RESP|REC ESP|R ESP", ("REsp",)),
     (r"RECURSO EXTRAORDINARIO COM AGRAVO|ARE", ("ARE",)),
@@ -93,32 +87,30 @@ _PADROES = [
     (r"PEXT", ("PExt",)),
 ]
 
-# Palavras que ligam as partes da classe e não carregam informação
+# palavras que ligam as partes da classe e não carregam informação
 _IGNORAR = re.compile(
     r"^(?:NO|NA|NOS|NAS|EM|DE|DO|DA|N|O|A|AO|TST|CRIMINAL|CIVEL|SUPERIOR|TRIBUNAL|MILITAR|"
     r"SEGUND[OA]S?|TERCEIR[OA]S?|QUART[OA]S?|QUINT[OA]S?|DECIM[OA]S?)$")
 
 _REGEX = [(re.compile(rf"^(?:{p})\b"), s) for p, s in _PADROES]
 
-# Todas as palavras que o vocabulário conhece (as dos padrões, com as partes opcionais
-# por extenso, os conectivos e os tribunais). Serve para desfazer OCR: uma palavra
-# desconhecida só é corrigida se a correção cair numa palavra conhecida.
+# Todas as palavras dos padrões (com e sem as partes opcionais), os conectivos e os tribunais. Uma palavra
+# desconhecida só é corrigida como OCR se a correção cair numa palavra conhecida.
 _TODOS = "|".join([p for p, _ in _PADROES] + [_IGNORAR.pattern, "STF STJ TSE TST STM PROCESSO PROC"])
 _CONHECIDAS = (set(re.findall(r"[A-Z]+", re.sub(r"\(\?:|\)\??|\?", "", _TODOS))) |      # 'RESPE(?:L)?' -> RESPEL
                set(re.findall(r"[A-Z]+", re.sub(r"\(\?:[^()]*\)\?", " ", _TODOS))))     # e -> RESPE
 
 
-# confusões de OCR do nível 2 (as da aba Data e as vistas no desenvolvimento: 'profcrido', 'Júnlor')
+# confusões de OCR desfeitas nas palavras da classe ('Rec1amação', 'Reclarnação', 'Espccial')
 _TROCAS_OCR = {"0": "O", "5": "S", "1": "LI", "L": "I", "I": "L", "C": "E", "RN": "M"}
 
 
 def _variantes_ocr(palavra: str, max_trocas: int = 2):
-    """Leituras alternativas de uma palavra, desfazendo até `max_trocas` confusões de OCR.
-    Troca de letra por letra só em palavras de 4+ caracteres; dígito dentro de palavra, sempre."""
+    """Leituras da palavra com até `max_trocas` confusões de OCR desfeitas. Troca de letra por letra só em
+    palavras de 4 ou mais caracteres."""
     letras, digs = sum(c.isalpha() for c in palavra), sum(c.isdigit() for c in palavra)
     if letras < 2 or digs > letras - 1:
-        return                                   # '55', 'S15', '5l': número (com OCR), não 'SS', 'SLS', 'SL'. Classe
-                                                 # com OCR tem 2+ letras e mais letras que dígitos: 'Rec1amação', '5TJ'
+        return                                   # '55', 'S15', '5l' são números com OCR, não 'SS', 'SLS', 'SL'
 
     fronteira, vistas = [palavra], {palavra}
     for _ in range(max_trocas):
@@ -148,29 +140,23 @@ def _corrigir_ocr(t: str) -> str:
 
 def _preparar(texto: str) -> str:
     t = sem_acento(texto.replace("°", "º")).upper()     # 'n°' (grau) -> 'nº' -> 'NO'
-    t = re.sub(r"\bA\s*\.\s*RESP", "ARESP", t)            # 'A.REsp' é AREsp (o 'A' solto seria artigo)
+    t = re.sub(r"\bA\s*\.\s*RESP", "ARESP", t)            # 'A.REsp' é AREsp; o 'A' solto seria artigo
     t = re.sub(r"[.\-–—/()]", " ", t)
-    t = re.sub(r"\b(NOS|NAS|NO|NA)(?=EMBARGOS|AGRAVO|RECURSO)", r"\1 ", t)   # 'nosEMBARGOS' colado
-    t = re.sub(r"\bAG(?=(?:AIRR|ARR|RRAG|RR)\b)", "AG ", t)                     # TST 'AgARR' -> 'Ag ARR'
-    return _corrigir_ocr(re.sub(r"\s+", " ", t).strip())    # 'Reclarnação', 'Rec1amação', 'C0RPUS'
+    t = re.sub(r"\b(NOS|NAS|NO|NA)(?=EMBARGOS|AGRAVO|RECURSO)", r"\1 ", t)   # 'nosEMBARGOS'
+    t = re.sub(r"\bAG(?=(?:AIRR|ARR|RRAG|RR)\b)", "AG ", t)                     # 'AgARR' -> 'Ag ARR'
+    return _corrigir_ocr(re.sub(r"\s+", " ", t).strip())
 
 
 @lru_cache(maxsize=100000)
 def palavra_conhecida(palavra: str) -> bool:
-    """A palavra (já com OCR desfeito) é do vocabulário de classes? Uma sequência que tenha alguma palavra
-    desconhecida nunca é classe — serve para descartar começos sem chamar canonizar_classe."""
+    """Se a palavra pertence ao vocabulário de classes (filtro barato antes de canonizar_classe)."""
     return all(p in _CONHECIDAS for p in _preparar(palavra).split())
 
 
-@lru_cache(maxsize=200000)                # função pura e muito chamada (varredura à esquerda de cada número)
+@lru_cache(maxsize=200000)
 def canonizar_classe(texto: str) -> tuple[str, ...]:
-    """Lê a classe da esquerda para a direita e devolve as siglas canônicas.
-
-    Palavras desconhecidas são ignoradas (não derrubam a leitura do resto).
-    """
+    """Siglas canônicas da classe, da esquerda para a direita; palavras desconhecidas saem como '?PALAVRA'."""
     t = _preparar(texto)
-    # siglas grudadas do TST ("AgARR", "EEDRR") não são separadas aqui de propósito:
-    # 'AGARR' é tentado inteiro; se não casar, cai como desconhecido.
     siglas: list[str] = []
     while t:
         for rx, s in _REGEX:
@@ -182,7 +168,7 @@ def canonizar_classe(texto: str) -> tuple[str, ...]:
         else:
             palavra, _, t = t.partition(" ")
             if not _IGNORAR.match(palavra):
-                siglas.append("?" + palavra)       # marca o desconhecido para inspeção
+                siglas.append("?" + palavra)
     return tuple(siglas)
 
 
@@ -192,7 +178,7 @@ def classe_base(siglas: tuple[str, ...]) -> str | None:
     return conhecidas[-1] if conhecidas else None
 
 
-# Tribunal implícito em cada classe-base (quando a citação não diz o tribunal)
+# tribunais em que cada classe-base existe (usado quando a citação não diz o tribunal)
 TRIBUNAIS_DA_CLASSE = {
     "REsp": {"STJ"}, "AREsp": {"STJ"}, "RHC": {"STJ", "STF"}, "RMS": {"STJ", "STF"},
     "HC": {"STJ", "STF", "STM"}, "MS": {"STJ", "STF"}, "Rcl": {"STF", "STJ"},

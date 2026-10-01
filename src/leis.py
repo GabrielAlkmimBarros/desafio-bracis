@@ -1,13 +1,12 @@
-"""Reconhecer qual lei está sendo citada: 'CPC', 'Código de Processo Civil',
-'Lei nº 13.105/2015' -> 'L13105' (o mesmo código que o índice extrai da base).
-"""
+"""Identifica a lei citada: 'CPC', 'Código de Processo Civil', 'Lei nº 13.105/2015' -> 'L13105'."""
 import re
-from functools import lru_cache
 from difflib import SequenceMatcher
+from functools import lru_cache
 
 from .normalizar import digitos, sem_acento
 
-# nome ou sigla -> código canônico (tipo + número da lei)
+# Nome ou sigla -> código da lei (tipo + número). A lista é conhecimento público, não vem da base: uma lei
+# fora dela continua resolvendo quando citada pelo número; citada só pelo nome, não é detectada.
 APELIDOS = {
     "cpc": "L13105", "ncpc": "L13105", "codigo de processo civil": "L13105",
     "novo codigo de processo civil": "L13105",
@@ -25,9 +24,6 @@ APELIDOS = {
     "ctn": "L5172", "codigo tributario nacional": "L5172",
     "eca": "L8069", "estatuto da crianca e do adolescente": "L8069",
     "lei das eleicoes": "L9504", "lei de inelegibilidades": "LC64", "lei de inelegibilidade": "LC64",
-    # leis federais conhecidas pelo nome (conhecimento público, não derivado da base): se o banco da
-    # avaliação trouxer artigos delas, a citação pelo nome também resolve. Lei fora desta lista continua
-    # resolvendo quando citada pelo número ('Lei nº 8.112/90'); pelo nome, apenas não é detectada.
     "lei de execucao penal": "L7210", "lep": "L7210", "lei maria da penha": "L11340",
     "lei de improbidade administrativa": "L8429", "lei de improbidade": "L8429",
     "lindb": "DL4657", "lei de introducao as normas do direito brasileiro": "DL4657",
@@ -42,8 +38,8 @@ APELIDOS = {
     "estatuto dos servidores publicos": "L8112", "regime juridico unico": "L8112",
 }
 
-# número da lei: '13.105' | '13105' | com OCR ('13.l05', 'B.078'); as letras de OCR são
-# maiúsculas/‘l’ e casadas sem re.I, para 'nº' e palavras não virarem número
+# Número da lei com OCR ('13.l05', 'B.078'). As letras de OCR são casadas sem re.I para que 'nº' e
+# palavras comuns não virem número.
 _NUM_LEI = r"(?-i:[\dOlISBG]{1,3}(?:\.\s?[\dOlISBG]{3})+|[\dOlISBG]+)"
 _LEI_NUMERADA = re.compile(
     r"(?P<tipo>Lei\s+C[o0](?:m|rn)p[l1I][ec](?:m|rn)[ec]ntar|LC|Decreto[\s\-]*Lei|DL|Lei)\s*"
@@ -53,32 +49,28 @@ _LEI_NUMERADA = re.compile(
 
 def _limpar(s: str) -> str:
     s = sem_acento(s).lower()
-    s = s.replace("rn", "m")                       # OCR clássico: rn <-> m
+    s = s.replace("rn", "m")                       # OCR: rn <-> m
     return re.sub(r"\s+", " ", s).strip()
 
 
 def ler_lei(texto: str) -> tuple[str, int] | None:
-    return _ler_lei(texto[:200])                 # a lei ocupa no máximo algumas palavras
+    """Lê a lei no início de `texto`. Devolve (código, quantos caracteres a lei ocupa) ou None."""
+    return _ler_lei(texto[:200])
 
 
 @lru_cache(maxsize=50000)
 def _ler_lei(texto: str) -> tuple[str, int] | None:
-    """Lê a lei no INÍCIO de `texto`. Devolve (código, quantos caracteres a lei ocupa).
-
-    Tolera ruído de OCR ('Constituição Fedcral') comparando por semelhança.
-    """
     m = _LEI_NUMERADA.match(texto)
     if m and any(c.isdigit() for c in m["num"]):
-        tipo = re.sub(r"[\s\-]", "", sem_acento(m["tipo"]).upper()).replace("0", "O")  # 'Lei\nC0mplementar' -> LEICOMPLEMENTAR
+        tipo = re.sub(r"[\s\-]", "", sem_acento(m["tipo"]).upper()).replace("0", "O")
         prefixo = "LC" if tipo.startswith("LEICO") or tipo == "LC" else \
             {"DECRETOLEI": "DL", "DL": "DL"}.get(tipo, "L")
         numero = int(digitos(m["num"]))
         return f"{prefixo}{numero}", m.end()
 
-    # nomes por extenso ou siglas: tenta as primeiras 7..1 palavras, da mais longa para a mais curta
-    # do trecho mais longo para o mais curto, nome exato ou parecido (OCR: 'Constituição Fedcral',
-    # 'Código Penal Mi1itar'). O parecido precisa ter o MESMO número de palavras do nome da lei: OCR troca
-    # letras, não acrescenta palavras — assim 'Código Penal e' não vira 'Código Penal' com um ' e' a mais.
+    # Nome por extenso ou sigla, do trecho mais longo (7 palavras) para o mais curto, exato ou parecido
+    # ('Constituição Fedcral'). O parecido precisa ter o mesmo número de palavras do nome: OCR troca letras,
+    # não acrescenta palavras, e assim 'Código Penal e' não é lido como 'Código Penal' mais um 'e'.
     palavras = list(re.finditer(r"\S+", texto[:120]))
     for k in range(min(7, len(palavras)), 0, -1):
         bruto = texto[:palavras[k - 1].end()].rstrip(".,;:)]\"'”’»")
@@ -95,7 +87,7 @@ def _ler_lei(texto: str) -> tuple[str, int] | None:
                 continue
             sm = SequenceMatcher(None, cand, nome)
             if sm.real_quick_ratio() < 0.9 or sm.quick_ratio() < 0.9:
-                continue                               # limites superiores baratos: não chega a 0,9
+                continue                               # limites superiores baratos da semelhança
             r = sm.ratio()
             if r >= 0.9 and (melhor is None or r > melhor[0]):
                 melhor = (r, cod)

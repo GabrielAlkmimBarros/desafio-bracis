@@ -1,30 +1,6 @@
-"""Teste de estresse: gera citações sintéticas a partir da própria base e confere o sistema.
+"""Estresse: cita cada registro da base de vários jeitos (seções A a F) e confere detecção e classificação.
 
-O gabarito de desenvolvimento só cita ~80 acórdãos; o conjunto cego vai citar outros, escritos
-de outros jeitos. Aqui cada registro da base é citado de vários modos e cada frase é conferida
-de ponta a ponta — detecção (span com IoU >= 0,5, nada sobrando na frase) e classificação:
-
-  A  acórdão real, 5 formatos fixos      (sigla, por extenso, sem pontuação, OCR, TST)
-  A2 acórdão real, ruído de nível 2      abreviações, 'n°/No/Nº', número com espaços ou quebrado,
-                                         separador de UF, OCR no número E na classe, quebra de linha
-  B  acórdão inventado                   mesmo formato, número que não existe na base
-  C  incompleta                          tribunal + ano + relator, sem número (vários moldes)
-  D  lei e súmula                        artigos e súmulas da base (real) e fora dela (inventada)
-  E  distratores                         autos do cabeçalho, OAB, fls., protocolo, valor, CPF/CNPJ:
-                                         nada pode ser detectado
-  F  redação real                        padrões de citação extraídos de decisões públicas do STJ
-                                         (scripts/padroes_redacao_real.json), com registros da base
-                                         (mesma cadeia oficial de classe, mesma base) e números inexistentes;
-                                         a resposta vem do cabeçalho bruto e do vocabulário oficial do STJ
-
-Resultados por frase:
-    certo        -> classe certa (e, se real, o registro certo)
-    ambígua      -> o número+classe existe em 2+ registros diferentes (a organização garante
-                    que citações reais nunca apontam para esses; 'incompleta' é o esperado)
-    falhou       -> não detectou, span errado, sobrou citação espúria ou classificou errado
-    GRAVE        -> (dentro de falhou) inventada classificada como real — o erro que a métrica pune
-
-Uso:  python scripts/estresse.py [--mostrar 20] [--secao A2] [--db outro.db] [--situacoes] [--semente N]
+Uso:  python scripts/estresse.py [--secao A2] [--situacoes] [--semente N] [--db BASE] [--mostrar 20]
 """
 import argparse
 import json
@@ -83,7 +59,7 @@ def ruido_ocr(s: str, rng: random.Random, trocas: int = 1, quebra: bool = True) 
     return s
 
 
-# grafias de nível 2 para cada sigla canônica (as da aba Data e as vistas no desenvolvimento)
+# grafias de nível 2 para cada sigla canônica
 GRAFIAS = {
     "REsp": ["REsp", "RESP", "Rec. Esp.", "R.Esp.", "Recurso Especial", "RECURSO ESPECIAL"],
     "AREsp": ["AREsp", "ARESP", "A.REsp", "Agravo em Recurso Especial"],
@@ -267,19 +243,19 @@ _EXTENSO = {"REsp": "Recurso Especial", "AREsp": "Agravo em Recurso Especial", "
             "REspE": "Recurso Especial Eleitoral", "Apl": "Apelação", "RSE": "Recurso em Sentido Estrito",
             "RR": "Recurso de Revista", "AIRR": "Agravo de Instrumento em Recurso de Revista"}
 MOLDES_INCOMPLETA = [
-    # vistos no desenvolvimento
+    # redações das 26 peças
     "julgado do {T} proferido em {A} pela relatoria de {R}",
     "precedente do {T} de {A}, da relatoria de {R}",
     "{E} do {T}, de {A}, Rel. Min. {R}",
     "{S} de {A}, Rel. Min. {R}",
     "acórdão do {T} julgado em {A} sob relatoria de {R}",
-    # redações novas (a primeira é o exemplo do próprio enunciado)
+    # outras redações (a primeira é o exemplo do enunciado)
     "acórdão do {T} de {A}, relatado pelo Ministro {R}",
     "julgado do {T}, de {A}, de relatoria do Min. {R}",
     "precedente do {T} julgado em {A}, Relator Ministro {R}",
     "{E} julgado pelo {T} em {A}, sob a relatoria do Ministro {R}",
     "decisão do {T} de {A}, Rel. {R}",
-    # relator antes do ano, entre parênteses, tribunal por extenso (trazidas do estresse do colega)
+    # relator antes do ano, entre parênteses, tribunal por extenso
     "acórdão do {T}, de relatoria do Ministro {R}, julgado em {A}",
     "julgado do {T} de {A} (Rel. Min. {R})",
     "precedente do {TE} de {A}, da relatoria de {R}",
@@ -390,7 +366,7 @@ def formatos_sumula(trib, vinc, n, rng):
         yield "súmula nível 2", quebrar_linha(ruido_ocr_curto(s, rng), rng)
 
 
-# ---- inventadas com número totalmente aleatório (trazidas do estresse do colega)
+# ---- inventadas com número totalmente aleatório
 
 def formatos_inventada_aleatoria(ix, rng):
     for _ in range(60):
@@ -411,7 +387,7 @@ def formatos_inventada_aleatoria(ix, rng):
 
 # ---- distratores (números que parecem citação e não são)
 
-# frases sem citação (trazidas do estresse do colega): nada pode ser detectado
+# frases sem citação: nada pode ser detectado
 FRASES_SEM_CITACAO = [
     "Processo nº 6706918-56.2019.4.17.3043", "Autos nº 9426435-30.2024.8.08.5965", "Valor da causa: R$ 111.452,72",
     "por seu advogado que esta subscreve (OAB/BA 349745), vem, respeitosamente",
@@ -587,7 +563,9 @@ def julgar(r, problema, esperado, ids_ok):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mostrar", type=int, default=15)
-    ap.add_argument("--secao", choices=["A", "A2", "B", "C", "D", "E", "F"], help="rodar só uma seção")
+    ap.add_argument("--secao", choices=["A", "A2", "B", "C", "D", "E", "F"],
+                    help="rodar só uma seção: A acórdão real, A2 real com ruído de nível 2, B inventada, "
+                         "C incompleta, D lei e súmula, E distratores, F redação real do STJ")
     ap.add_argument("--situacoes", action="store_true", help="tabela de casos e erros por situação do resolvedor")
     ap.add_argument("--semente", type=int, default=0, help="outra semente: outros sorteios de ruído e de casos")
     ap.add_argument("--db", default=str(RAIZ / "data" / "desafio1_bracis.db"), help="base a usar")

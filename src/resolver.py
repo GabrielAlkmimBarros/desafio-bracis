@@ -1,20 +1,12 @@
-"""Resolvedor: recebe uma citação detectada, consulta o índice e decide a classe.
+"""Resolvedor: consulta o índice e classifica a citação detectada.
 
-Regra de contagem (do enunciado):
-    exatamente 1 registro  -> real        (com o id desse registro)
+    exatamente 1 registro  -> real (com o id do registro)
     0 registros            -> inventada
     2+ sem desempate       -> incompleta
-    sem número             -> incompleta  (tribunal + ano + relator batem com vários acórdãos)
+    sem número             -> incompleta
 
-Confiança: cada decisão cai numa SITUAÇÃO, e a confiança vem de um PERFIL (tabela situação ->
-valor, ver PERFIS abaixo). O Brier é mínimo quando a confiança é igual à taxa de acerto da
-situação em textos nunca vistos. Os valores combinam três evidências (`python scripts/calibracao.py`
-e `python scripts/cenarios_confianca.py`):
-  - as 26 peças de desenvolvimento: acerto de 100% em todas as situações, mas otimista
-    (o sistema foi depurado nelas);
-  - o estresse sintético rodado na versão ANTERIOR às correções dele: variações que o sistema
-    nunca tinha visto — pessimista, porque o ruído gerado é mais agressivo que o do desafio;
-  - o modo de falha de cada situação (o que precisaria dar errado para a decisão errar).
+Cada decisão cai numa situação, e a confiança vem do perfil ativo (situação -> valor). O Brier é mínimo quando
+a confiança é a taxa de acerto da situação em textos novos.
 """
 import os
 
@@ -25,80 +17,10 @@ from .vocabulario import TRIBUNAIS_DA_CLASSE, classe_base
 # dígito J do número CNJ (Resolução CNJ 65/2008) -> tribunal superior
 _TRIBUNAL_DA_JUSTICA = {"1": "STF", "3": "STJ", "5": "TST", "6": "TSE", "7": "STM"}
 
-# Perfil "calibrada": taxa de acerto estimada com margem para o que nenhum teste cobre.
-_CALIBRADA = {
-    # ---- real
-    # Número único no tribunal, classe e UF conferem. Uma leitura errada quase nunca cai por acaso
-    # em outro registro existente (estresse: 0 erros em ~2.000 citações ruidosas detectadas), e um
-    # número inventado coincide com um registro da mesma classe em ~0,04% dos sorteios.
-    "real: número único": 0.98,
-    # Número único, mas a classe-base ou a UF da citação diverge do registro (número simples de
-    # STF/STJ, que é numerado por classe). Em geral é variação de redação ('Rcl' para 'AgRg na Rcl'),
-    # mas também é onde cairia um número inventado que coincide com processo de outra classe.
-    "real: número único, classe ou UF divergem": 0.90,
-    # 2+ registros com o número; classe ou UF escolheram um. Depende de ter lido a classe inteira.
-    "real: desempate por classe ou UF": 0.93,
-    # Registros de texto idêntico com ids diferentes: a escolha entre eles é arbitrária (a organização
-    # diz que nenhuma citação aponta para eles; se apontar, é cara ou coroa).
-    "real: duplicata de texto idêntico": 0.50,
-    # Lei ou súmula da base. Erra só se a lei/tribunal for mal identificado.
-    "real: lei ou súmula da base": 0.97,
-    # ---- inventada
-    # Número ausente da base. O modo de falha é uma citação real lida pela metade (OCR, quebra de
-    # linha) — raro em texto limpo, mais provável em texto ruidoso (estresse pré-correção: 99,4%).
-    "inventada: número ausente, texto limpo": 0.95,
-    "inventada: número ausente, texto com ruído": 0.90,
-    # CNJ com dígito verificador VÁLIDO e ausente da base: leitura errada quase sempre quebra o DV,
-    # e número inventado ao acaso tem DV válido só 1 vez em 97 (as 3 inventadas CNJ do
-    # desenvolvimento têm DV inválido). Sobra a hipótese de falha do índice: incerto.
-    "inventada: CNJ com DV válido, ausente": 0.60,
-    # O número existe, mas só em tribunal incompatível com a classe citada: quase sempre coincidência,
-    # mas pode ser lacuna no mapa classe -> tribunal. Não ocorre no desenvolvimento.
-    "inventada: número só existe em outro tribunal": 0.85,
-    # Artigo ou súmula fora da base (estresse pré-correção: 100% limpo, 93% ruidoso).
-    "inventada: lei ou súmula fora da base, texto limpo": 0.93,
-    "inventada: lei ou súmula fora da base, texto com ruído": 0.88,
-    # A base não tem registros de Tema; um único exemplo no desenvolvimento, convenção incerta.
-    "inventada: tema": 0.80,
-    # ---- incompleta
-    # Sem número: é incompleta pela forma, não pela contagem (há incompletas do gabarito com 0
-    # candidatos no banco). Estresse: 100% das detectadas, limpas ou ruidosas.
-    "incompleta: sem número": 0.95,
-    # Número que casa com 2+ registros sem desempate. Pela definição é incompleta, mas citações reais
-    # nunca apontam para esses registros — então também pode ser uma real cuja classe/UF não foi lida.
-    "incompleta: número ambíguo": 0.60,
-    # Súmula sem tribunal: no estresse, sempre foi um tribunal que não foi lido ('/STJ', '5TJ').
-    # O que sobra depois das correções não tem rótulo conhecido: máxima incerteza.
-    "incompleta: súmula sem tribunal": 0.50,
-}
-
-# Perfil "recomendada": ALTO (0,99) onde nenhum teste jamais registrou erro — 26 peças, estresse
-# atual, e o estresse rodado sobre duas versões que ainda não conheciam as variações (a anterior às
-# correções e a do colega); MÉDIO onde essas versões erraram (inventada em texto ruidoso, lei/súmula
-# inventada); BAIXO onde há dúvida real sobre o rótulo, que nenhum teste consegue medir.
-_RECOMENDADA = {
-    "real: número único": 0.99,
-    "real: lei ou súmula da base": 0.99,
-    "incompleta: sem número": 0.99,
-    "inventada: número ausente, texto limpo": 0.98,
-    "inventada: número ausente, texto com ruído": 0.95,
-    "inventada: lei ou súmula fora da base, texto limpo": 0.97,
-    "inventada: lei ou súmula fora da base, texto com ruído": 0.93,
-    "real: desempate por classe ou UF": 0.95,
-    "real: número único, classe ou UF divergem": 0.90,
-    "inventada: número só existe em outro tribunal": 0.85,
-    "inventada: tema": 0.85,
-    "inventada: CNJ com DV válido, ausente": 0.60,
-    "incompleta: número ambíguo": 0.60,
-    "incompleta: súmula sem tribunal": 0.50,
-    "real: duplicata de texto idêntico": 0.50,
-}
-
-# Perfil "padrao" (o usado): 1,0 em toda situação em que NENHUMA fonte mostrou erro do código atual;
-# valor menor só onde houve erro ou há dúvida real sobre o rótulo. Fontes (n / erros do código atual):
-#   E = estresse, 41 sorteios na base original + 7 bases modificadas (inclui a seção F: redação REAL de
-#       decisões públicas do STJ)     B = 26 peças x 7 bases     M = metamórfico, 26 peças x 8 transformações
-#   D = 26 peças do desenvolvimento
+# Perfil "padrao" (o usado): 1,0 nas situações em que nenhum teste registrou erro; valor menor só onde houve erro
+# ou onde o rótulo correto é incerto. Testes (citações / erros):
+#   E = estresse (41 sorteios na base original + 7 bases modificadas, inclui redação real do STJ)
+#   B = 26 peças x 7 bases    M = metamórfico, 26 peças x 8 transformações    D = 26 peças
 #   situação                                          E           B        M       D
 #   real: número único                          297074/0      436/0    608/0    76/0
 #   real: número único, classe ou UF divergem     9916/0        -        -        -
@@ -110,10 +32,8 @@ _RECOMENDADA = {
 #   inventada: lei/súmula fora, texto limpo      30369/0      124/0    116/0    15/0
 #   inventada: lei/súmula fora, com ruído         4298/0       47/0     52/0     6/0
 #   inventada: CNJ com DV válido, ausente          675/0       40/0       -        -
-# Os 4 erros são ambiguidades genuínas entre sigla e número com OCR ('RHC SS. 413' = 55.413 ou classe
-# SS?; '5LS 2.883'; '68. 2GO' = 68.260 ou UF GO?). Fora da tabela, também sem erro: transplante de 8.106
-# citações com redação real e resposta conhecida; auditoria cega de 180 detecções em 19 milhões de
-# caracteres de decisões reais do STJ; fuzzing de 6.000 textos (nenhum erro de execução).
+# Os 4 erros são ambiguidades genuínas entre sigla e número com OCR ('RHC SS. 413': 55.413 ou classe SS?;
+# '68. 2GO': 68.260 ou UF GO?).
 _PADRAO = {
     "real: número único": 1.0,
     "real: número único, classe ou UF divergem": 1.0,
@@ -121,41 +41,61 @@ _PADRAO = {
     "real: lei ou súmula da base": 1.0,
     "incompleta: sem número": 1.0,
     "inventada: número ausente, texto limpo": 1.0,
-    "inventada: número ausente, texto com ruído": 0.99,      # 4 erros em 40.960 (acerto 0,9999), para baixo
+    "inventada: número ausente, texto com ruído": 0.99,
     "inventada: lei ou súmula fora da base, texto limpo": 1.0,
     "inventada: lei ou súmula fora da base, texto com ruído": 1.0,
     "inventada: CNJ com DV válido, ausente": 1.0,
-    # dúvida real sobre o rótulo (nenhum teste consegue medir a resposta certa)
-    "inventada: tema": 0.90,                        # 16/0, mas todas réplicas de UM exemplo rotulado
+    # rótulo correto incerto, que nenhum teste consegue medir
+    "inventada: tema": 0.90,                        # um único exemplo rotulado
     "inventada: número só existe em outro tribunal": 0.85,  # nunca observada
-    "incompleta: número ambíguo": 0.60,             # nunca observada com rótulo verdadeiro
-    "incompleta: súmula sem tribunal": 0.50,        # nunca observada no código atual; errou sempre nas antigas
-    "real: duplicata de texto idêntico": 0.50,      # escolha entre textos idênticos é cara ou coroa
+    "incompleta: número ambíguo": 0.60,             # nunca observada com rótulo conhecido
+    "incompleta: súmula sem tribunal": 0.50,        # nunca observada com rótulo conhecido
+    "real: duplicata de texto idêntico": 0.50,      # escolha entre textos idênticos é arbitrária
+}
+
+# Perfil "conservador": taxa de acerto estimada com margem para variações que nenhum teste cobre.
+_CONSERVADOR = {
+    # número único, classe e UF conferem: leitura errada quase nunca cai em outro registro existente
+    "real: número único": 0.98,
+    # classe ou UF divergem: em geral variação de redação, mas é onde cairia um número inventado que coincide
+    # com processo de outra classe
+    "real: número único, classe ou UF divergem": 0.90,
+    "real: desempate por classe ou UF": 0.93,       # depende de ter lido a classe inteira
+    "real: duplicata de texto idêntico": 0.50,
+    "real: lei ou súmula da base": 0.97,
+    # o modo de falha é uma citação real lida pela metade (OCR, quebra de linha), mais provável com ruído
+    "inventada: número ausente, texto limpo": 0.95,
+    "inventada: número ausente, texto com ruído": 0.90,
+    # leitura errada quase sempre quebra o DV, e um número inventado ao acaso tem DV válido 1 vez em 97
+    "inventada: CNJ com DV válido, ausente": 0.60,
+    "inventada: número só existe em outro tribunal": 0.85,
+    "inventada: lei ou súmula fora da base, texto limpo": 0.93,
+    "inventada: lei ou súmula fora da base, texto com ruído": 0.88,
+    "inventada: tema": 0.80,
+    "incompleta: sem número": 0.95,
+    # pode ser uma real cuja classe ou UF não foi lida
+    "incompleta: número ambíguo": 0.60,
+    "incompleta: súmula sem tribunal": 0.50,
 }
 
 PERFIS = {
     "padrao": _PADRAO,
-    "recomendada": _RECOMENDADA,
-    "calibrada": _CALIBRADA,
-    # como na versão do colega: 1,0 em tudo, menos as duas situações que não aparecem no gabarito
-    "colega": {k: (0.6 if k in ("incompleta: número ambíguo", "incompleta: súmula sem tribunal") else 1.0)
-               for k in _CALIBRADA},
-    "um": {k: 1.0 for k in _CALIBRADA},                    # 1,0 em tudo
+    "conservador": _CONSERVADOR,
+    "um": {k: 1.0 for k in _PADRAO},
 }
-# Para trocar de perfil: mude o padrão abaixo, ou rode com CONFIANCA_PERFIL=recomendada|calibrada|colega|um.
+# outro perfil: CONFIANCA_PERFIL=conservador|um
 PERFIL = os.environ.get("CONFIANCA_PERFIL", "padrao")
 CONFIANCA = PERFIS[PERFIL]
 
 
 def candidatos_acordao(ix: Indice, numero: str, classe: tuple, tribunal: str | None = None,
                        uf: str | None = None) -> tuple[list[Ficha], list[str]]:
-    """Filtra os registros com esse número até sobrar o mínimo possível.
-    Devolve (candidatos, passos aplicados) — os passos ajudam a entender cada decisão."""
+    """Filtra os registros com esse número até sobrar o mínimo possível. Devolve (candidatos, passos)."""
     cands = ix.buscar_numero(numero)
     passos = [f"número:{len(cands)}"]
 
-    # 1) tribunal: dito na citação, implícito no CNJ (dígito J) ou implícito na classe. O mapa fixo
-    #    classe -> tribunal é somado ao que a própria base mostra; se nada se sabe, não filtra.
+    # 1) tribunal: dito na citação, implícito no CNJ (dígito J) ou na classe (mapa fixo somado ao que a base
+    #    mostra); se nada se sabe, não filtra
     tribs = None
     if tribunal:
         tribs = {tribunal}
@@ -167,9 +107,8 @@ def candidatos_acordao(ix: Indice, numero: str, classe: tuple, tribunal: str | N
         tribs = (TRIBUNAIS_DA_CLASSE.get(base, set()) | ix.tribunais_da_classe.get(base, set())) or None
     if tribs:                                   # registro sem tribunal na base não é descartado
         filtrados = [f for f in cands if f.tribunal in tribs or not f.tribunal]
-        # número CNJ é único por construção (embute justiça, tribunal e origem): se o tribunal gravado na
-        # base não bate com o do número, vale o número. Número simples coincide entre tribunais; ali o
-        # filtro protege contra a coincidência e pode zerar os candidatos.
+        # número CNJ é único por construção: se o tribunal gravado na base diverge, vale o número. Número simples
+        # coincide entre tribunais, e ali o filtro pode zerar os candidatos
         cands = filtrados if (filtrados or not eh_cnj(numero)) else cands
         passos.append(f"tribunal:{len(cands)}")
 

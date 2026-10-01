@@ -1,17 +1,9 @@
 #!/usr/bin/env bash
-# Ponto de entrada único (formato sugerido pela organização):
+# Uso: bash run.sh <caminho_db> <pasta_txt> <arquivo_saida>
 #
-#     bash run.sh <caminho_db> <pasta_txt> <arquivo_saida>
-#
-# <arquivo_saida>:
-#   - terminado em .csv  -> grava ali o submission.csv (1 linha por documento, formato das submissões)
-#                           e os JSONs completos do contrato (schema 1.2) em <arquivo_saida sem .csv>_json/
-#   - qualquer outro     -> tratado como PASTA: os JSONs vão dentro dela, junto com submission.csv
-# Nos dois casos saem as duas formas: o CSV que a métrica consome e o JSON completo exigido na entrega.
-#
-# Sem caminhos absolutos: os caminhos recebidos valem a partir de onde o script é chamado, e o código
-# é localizado pela posição deste arquivo. Sem rede, sem modelos, só a biblioteca padrão do Python 3.10+.
-# Resultado determinístico (nenhuma aleatoriedade; PYTHONHASHSEED fixado por garantia).
+# <arquivo_saida> terminado em .csv: grava ali o submission.csv e os JSONs (schema 1.2) em <arquivo_saida>_json/.
+# Qualquer outro nome é tratado como pasta: os JSONs vão dentro dela, junto com submission.csv.
+# Caminhos relativos valem a partir de onde o script é chamado. Sem rede e sem dependências além do Python 3.10+.
 set -euo pipefail
 
 if [ "$#" -ne 3 ]; then

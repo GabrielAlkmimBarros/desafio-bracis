@@ -1,11 +1,6 @@
-"""Gera JSONs a partir do próprio gabarito — um "sistema perfeito".
+"""Gera JSONs a partir do gabarito (sistema perfeito), para testar JSON -> submission -> métrica e ver o teto.
 
-Serve para testar o encanamento (JSON → submission → métrica) e para ver o teto
-da nota. Não é solução: no conjunto cego não existe gabarito.
-
-Uso:
-    python scripts/oraculo.py out_oraculo/                  # sem confiança
-    python scripts/oraculo.py out_oraculo/ --confianca 1.0  # com confiança fixa
+Uso:  python scripts/oraculo.py out_oraculo/ [--confianca 1.0]
 """
 import argparse
 import json

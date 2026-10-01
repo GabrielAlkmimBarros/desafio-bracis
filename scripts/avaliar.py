@@ -1,13 +1,6 @@
-"""Avalia uma pasta de JSONs contra o gabarito usando a MÉTRICA OFICIAL.
+"""Nota de uma pasta de JSONs contra o gabarito, calculada com oficial/kaggle_metric.py.
 
-Uso:
-    python scripts/avaliar.py out/                 # nota + quadro por nível e classe
-    python scripts/avaliar.py out/ --erros         # + lista de cada erro, citação por citação
-    python scripts/avaliar.py out/ --erros --nivel 2
-
-Toda a contagem (alinhamento por IoU, TP/FP/FN, penalidade, bônus) vem das funções
-de oficial/kaggle_metric.py — este script só monta as tabelas de entrada no formato
-do Kaggle e imprime os resultados de um jeito legível.
+Uso:  python scripts/avaliar.py out/ [--erros] [--nivel 1|2]
 """
 import argparse
 import json
