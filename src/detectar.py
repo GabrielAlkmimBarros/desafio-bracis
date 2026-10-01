@@ -16,6 +16,7 @@ Quatro espécies, cada uma com a sua estratégia:
 O detector não consulta a base: só acha e descreve. Quem decide real/inventada é o resolvedor.
 """
 import re
+import sys
 from dataclasses import dataclass, field
 
 from .leis import ler_lei
@@ -436,8 +437,12 @@ def tem_ruido(trecho: str) -> bool:
 
 
 def detectar(texto: str) -> list[Candidata]:
-    todas = (detectar_incompletas(texto) + detectar_sumulas(texto) + detectar_temas(texto) +
-             detectar_artigos(texto) + detectar_acordaos(texto))
+    todas = []
+    for detector in (detectar_incompletas, detectar_sumulas, detectar_temas, detectar_artigos, detectar_acordaos):
+        try:                       # um detector com erro não derruba os outros: perde-se só a parte dele
+            todas += detector(texto)
+        except Exception as e:     # noqa: BLE001
+            print(f"aviso: {detector.__name__} falhou ({type(e).__name__}: {e}); seguindo sem ele", file=sys.stderr)
     # sobreposição: fica a de maior prioridade (e, empatando, a mais longa)
     todas.sort(key=lambda c: (_PRIORIDADE[c.especie], -(c.fim - c.inicio)))
     escolhidas: list[Candidata] = []

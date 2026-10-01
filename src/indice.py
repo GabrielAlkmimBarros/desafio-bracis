@@ -219,29 +219,38 @@ class Indice:
         self.por_numero: dict[str, list[Ficha]] = defaultdict(list)
         self.por_norma: dict[tuple, Ficha] = {}
         self.tribunais_da_classe: dict[str, set] = defaultdict(set)   # classe-base -> tribunais NA BASE
+        self.ignorados: list[str] = []                                  # registros que não puderam ser lidos
         con = sqlite3.connect(caminho_db)
         linhas = con.execute("SELECT id, documento_id, tribunal, natureza, ano, relator, texto "
                              "FROM documentos ORDER BY documento_id").fetchall()
         con.close()
         for id_, doc, trib, natureza, ano, relator, texto in linhas:
-            trib = trib.strip().upper() if isinstance(trib, str) and trib.strip() else None
-            f = Ficha(id=id_, documento_id=doc, tribunal=trib, natureza=natureza, ano=ano, relator=relator,
-                      assinatura=hashlib.md5(texto.encode("utf-8")).hexdigest())
-            if natureza == "acordao":
-                self._ler_acordao(f, texto)
-                if f.classe and f.tribunal:
-                    self.tribunais_da_classe[classe_base(f.classe)].add(f.tribunal)
-                for n in [f.numero, *f.apelidos]:
-                    if n:
-                        self.por_numero[n].append(f)
+            try:
+                self._indexar(id_, doc, trib, natureza, ano, relator, texto)
+            except Exception as e:     # noqa: BLE001  registro estranho: fica fora do índice, com aviso
+                self.ignorados.append(f"{doc}: {type(e).__name__}: {e}")
+
+    def _indexar(self, id_, doc, trib, natureza, ano, relator, texto):
+        """Lê um registro da base e o coloca no índice (número -> fichas ou chave da norma)."""
+        texto = texto if isinstance(texto, str) else ("" if texto is None else str(texto))
+        trib = trib.strip().upper() if isinstance(trib, str) and trib.strip() else None
+        f = Ficha(id=id_, documento_id=doc, tribunal=trib, natureza=natureza, ano=ano, relator=relator,
+                  assinatura=hashlib.md5(texto.encode("utf-8")).hexdigest())
+        if natureza == "acordao":
+            self._ler_acordao(f, texto)
+            if f.classe and f.tribunal:
+                self.tribunais_da_classe[classe_base(f.classe)].add(f.tribunal)
+            for n in [f.numero, *f.apelidos]:
+                if n:
+                    self.por_numero[n].append(f)
+        else:
+            f.chave_norma = (_chave_pelo_detector(texto, natureza, trib) or
+                             (_chave_sumula(texto) if natureza == "sumula" else _chave_artigo(texto)))
+            if f.chave_norma:
+                self.por_norma[f.chave_norma] = f
             else:
-                f.chave_norma = (_chave_pelo_detector(texto, natureza, trib) or
-                                 (_chave_sumula(texto) if natureza == "sumula" else _chave_artigo(texto)))
-                if f.chave_norma:
-                    self.por_norma[f.chave_norma] = f
-                else:
-                    f.avisos.append("norma sem linha de identificação")
-            self.fichas.append(f)
+                f.avisos.append("norma sem linha de identificação")
+        self.fichas.append(f)
 
     def _ler_acordao(self, f: Ficha, texto: str):
         leitores = {
@@ -301,4 +310,6 @@ class Indice:
                   f"números com mais de um registro: {len(colisoes)}"]
         if sem_chave:
             linhas.append(f"normas NÃO identificadas (citações a elas sairão como inventada): {sem_chave[:10]}")
+        if self.ignorados:
+            linhas.append(f"registros ignorados por erro de leitura: {len(self.ignorados)} {self.ignorados[:3]}")
         return "\n".join(linhas)
